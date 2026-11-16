@@ -1,0 +1,1623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="theme-color" content="#12100e" />
+<title>Honshu · Nov 17 – Dec 8, 2026</title>
+<style>
+  :root {
+    --ink: #12100e;
+    --ink2: #1c1916;
+    --panel: #231f1b;
+    --line: rgba(232, 214, 186, 0.14);
+    --paper: #f3eadc;
+    --muted: #b7aa98;
+    --gold: #d7b07a;
+    --vermilion: #d4654a;
+    --moss: #8fa884;
+    --safe-b: env(safe-area-inset-bottom, 0px);
+    --safe-t: env(safe-area-inset-top, 0px);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--ink); color: var(--paper); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  body { max-width: 520px; margin: 0 auto; }
+  button, input, textarea { font-family: inherit; color: inherit; }
+  .app { min-height: 100dvh; padding-bottom: calc(78px + var(--safe-b)); }
+  header.top {
+    position: sticky; top: 0; z-index: 20;
+    padding: calc(12px + var(--safe-t)) 18px 12px;
+    background: linear-gradient(180deg, rgba(18,16,14,.96), rgba(18,16,14,.88) 70%, transparent);
+    backdrop-filter: blur(10px);
+  }
+  .kicker { letter-spacing: .22em; text-transform: uppercase; font-size: 10px; color: var(--gold); }
+  h1 { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif; font-weight: 500; font-size: 28px; margin: 4px 0 0; letter-spacing: -0.03em; }
+  .sub { color: var(--muted); font-size: 13px; margin-top: 4px; }
+  .view { display: none; padding: 6px 16px 24px; }
+  .view.on { display: block; }
+  .card {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 18px;
+    padding: 14px 14px 12px; margin: 10px 0;
+  }
+  .card h2, .card h3 { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif; font-weight: 500; margin: 0 0 6px; letter-spacing: -0.02em; }
+  .card h2 { font-size: 22px; }
+  .card h3 { font-size: 17px; }
+  .meta { color: var(--muted); font-size: 12.5px; line-height: 1.45; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill {
+    border: 1px solid var(--line); border-radius: 999px; padding: 5px 10px; font-size: 12px; color: var(--paper);
+    background: transparent;
+  }
+  .pill.on, .pill.go { background: var(--gold); color: #1b140c; border-color: transparent; font-weight: 560; }
+  .statgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .stat { background: #1a1714; border-radius: 14px; padding: 10px; }
+  .stat b { display: block; font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif; font-size: 18px; font-weight: 560; }
+  .stat span { color: var(--muted); font-size: 11px; letter-spacing: .04em; text-transform: uppercase; }
+  .day {
+    display: grid; grid-template-columns: 62px 1fr; gap: 8px; padding: 10px 0;
+    border-top: 1px solid var(--line);
+  }
+  .day .when { color: var(--gold); font-size: 12px; }
+  .day strong { display: block; font-size: 14.5px; }
+  .tag { display: inline-block; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--vermilion); margin-right: 6px; }
+  .tag.ok { color: var(--moss); }
+  .tag.gold { color: var(--gold); }
+  nav.dock {
+    position: fixed; left: 50%; transform: translateX(-50%); bottom: 0; width: min(520px, 100%);
+    display: grid; grid-template-columns: repeat(6, 1fr);
+    background: rgba(18,16,14,.94); border-top: 1px solid var(--line);
+    padding: 8px 4px calc(8px + var(--safe-b)); z-index: 30; backdrop-filter: blur(12px);
+  }
+  nav.dock button {
+    background: none; border: 0; color: var(--muted); font-size: 10.5px; padding: 6px 0;
+  }
+  nav.dock button.on { color: var(--gold); }
+  .fs-ctl { display: flex; gap: 6px; margin-top: 8px; }
+  .fs-ctl button {
+    background: #1a1714; border: 1px solid var(--line); border-radius: 10px;
+    min-width: 36px; height: 32px; font-size: 14px; color: var(--paper);
+  }
+  .fs-ctl button.on { background: var(--gold); color: #1b140c; border-color: transparent; }
+  .exp-form label { display: block; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 8px 0 4px; }
+  .exp-form select, .exp-form input, .exp-form textarea {
+    width: 100%; background: #161310; border: 1px solid var(--line); border-radius: 12px;
+    padding: 10px; font-size: 15px; color: var(--paper);
+  }
+  .exp-form textarea { min-height: 72px; }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .exp-row { padding: 10px 0; border-top: 1px solid var(--line); }
+  .exp-row .top { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+  .exp-row .amt { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif; color: var(--gold); }
+  .var-pos { color: var(--moss); }
+  .var-neg { color: #e7a090; }
+  .memo { width: 100%; background: #161310; border: 1px solid var(--line); border-radius: 12px; padding: 10px; font-size: 14px; min-height: 64px; }
+  html[data-fs="14"] .app { font-size: 14px; }
+  html[data-fs="16"] .app { font-size: 16px; }
+  html[data-fs="18"] .app { font-size: 18px; }
+  html[data-fs="20"] .app { font-size: 20px; }
+  html[data-fs="22"] .app { font-size: 22px; }
+  .app p, .app li, .app .meta, .app .day strong, .app .card h2, .app .card h3, .app h1, .app .sub, .app .pill, .app .tag, .app .small {
+    font-size: inherit;
+  }
+  .app h1 { font-size: 1.7em; }
+  .app .sub, .app .meta, .app .small { font-size: .82em; }
+  .app .card h2 { font-size: 1.3em; }
+  .app .card h3 { font-size: 1.05em; }
+  .app .day strong { font-size: .95em; }
+  .app .tag { font-size: .68em; }
+  .app .pill { font-size: .78em; }
+  .app nav.dock button { font-size: .68em; }
+
+  #gmap { width: 100%; height: 62vh; border: 0; border-radius: 18px; background: #1a1714; }
+  textarea, input[type="text"], input[type="date"] {
+    width: 100%; background: #161310; border: 1px solid var(--line); border-radius: 12px;
+    padding: 10px; font-size: 15px;
+  }
+  textarea { min-height: 110px; resize: vertical; }
+  .go {
+    background: var(--gold); color: #1b140c; border: 0; border-radius: 12px; padding: 10px 12px; font-weight: 560;
+  }
+  .ghost { background: transparent; border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
+  .check { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; border-top: 1px solid var(--line); }
+  .check input { margin-top: 3px; accent-color: var(--gold); }
+  .place-switch { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
+  .place-switch button { white-space: nowrap; }
+  ul.clean { margin: 6px 0 0; padding-left: 18px; }
+  ul.clean li { margin: 5px 0; line-height: 1.4; font-size: 14.5px; }
+  .warn { color: #e7c2a2; font-size: 13px; }
+  .small { font-size: 12px; color: var(--muted); line-height: 1.45; }
+  a { color: var(--gold); }
+  a.go, a.ghost { display: inline-block; text-decoration: none; text-align: center; }
+  .fx-out { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif; font-size: 34px; letter-spacing: -0.03em; line-height: 1.05; }
+  .fx-in { font-size: 15px; color: var(--gold); margin-top: 2px; }
+  .keys { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 10px; }
+  .keys button, .chips button {
+    background: #1a1714; border: 1px solid var(--line); border-radius: 12px;
+    min-height: 48px; font-size: 18px; font-weight: 560;
+  }
+  .keys button:active, .chips button:active { background: var(--gold); color: #1b140c; }
+  .chips { display: flex; gap: 6px; overflow-x: auto; padding: 8px 0 2px; }
+  .chips button { font-size: 13px; padding: 0 12px; white-space: nowrap; }
+  .fx-rate { width: 92px; padding: 8px; font-size: 15px; }
+  .route { display: flex; align-items: center; gap: 0; overflow-x: auto; padding: 8px 0 4px; }
+  .route button { background: #1a1714; border: 1px solid var(--line); border-radius: 12px; min-width: 72px; padding: 8px 6px; }
+  .route button b { display: block; color: var(--gold); font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif; font-size: 16px; }
+  .route button span { font-size: 11px; color: var(--muted); }
+  .route .leg { width: 14px; height: 2px; background: var(--gold); flex: 0 0 14px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="kicker">Steven · Thanh · same itinerary</div>
+    <h1 id="title">Honshu, late koyo</h1>
+    <div class="sub" id="subtitle">17 Nov – 8 Dec 2026 · SFO to NRT and back</div>
+    <div class="fs-ctl" id="fs-ctl" aria-label="Text size">
+      <button type="button" data-fs="14">A−</button>
+      <button type="button" data-fs="16">A</button>
+      <button type="button" data-fs="18">A+</button>
+      <button type="button" data-fs="20">A++</button>
+    </div>
+  </header>
+
+  <section class="view on" id="view-today"></section>
+  <section class="view" id="view-plan"></section>
+  <section class="view" id="view-map">
+    <div class="card" style="padding:10px">
+      <iframe id="gmap" title="Google Maps" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="about:blank"></iframe>
+      <p class="small" style="margin:8px 4px 2px">Google Maps itself, no key from this page. Tap a stop to drop that hotel on the map. Transit still opens the Google Maps app.</p>
+    </div>
+    <div id="map-list"></div>
+  </section>
+  <section class="view" id="view-places"></section>
+  <section class="view" id="view-spend"></section>
+  <section class="view" id="view-kit"></section>
+
+  <nav class="dock">
+    <button data-v="today" class="on">Today</button>
+    <button data-v="plan">Plan</button>
+    <button data-v="map">Map</button>
+    <button data-v="places">Places</button>
+    <button data-v="spend">Spend</button>
+    <button data-v="kit">Kit</button>
+  </nav>
+</div>
+<script>
+const TRIP = {
+  names: "Steven Lê & Thanh Le",
+  confirm: { aa: "LRKIZX", jl: "AH8CC3", fare: 1161.73 },
+  flights: [
+    { code: "AA 8410", op: "Japan Airlines", from: "SFO 11:45", date: "2026-11-17", to: "NRT 16:00", arrDate: "2026-11-18", cabin: "Economy O", bag: "1st checked free, 2nd $100, 50 lb / 62 in" },
+    { code: "AA 8409", op: "Japan Airlines", from: "NRT 17:40", date: "2026-12-08", to: "SFO 09:55", arrDate: "2026-12-08", cabin: "Economy O", bag: "same" }
+  ]
+};
+
+const BASES = [
+  {
+    id: "nrt", name: "Narita arrival", city: "Narita → Shinjuku",
+    stay: "17–18 Nov, air", pin: [35.772, 140.3929],
+    history: "Narita opened in 1978 after the Sanrizuka struggle against the airport’s land take. It is still the long-haul gate for Tokyo, not the city. The useful history here is operational: immigration, a SIM, then one train decision.",
+    advisor: "Wheels-down 16:00 is not hotel-at-16:00. Budget 60–90 minutes for immigration and bags on a midweek afternoon, then 80–100 minutes N’EX to Shinjuku, then a walk into Kabukicho. Real arrival at Cabin is 19:15–20:30. Eat on the train or at the station. Do not tour Narita town.",
+    recs: ["Narita Express to Shinjuku, reserved if the queue is long", "Welcome Suica or a digital IC at the airport, before the train", "eSIM before you leave the arrivals hall — airport Wi-Fi is enough to activate"],
+    money: "N’EX Narita–Shinjuku is about ¥3,250 ordinary reserved. A taxi is a ¥25,000–35,000 mistake with luggage."
+  },
+  {
+    id: "shinjuku", name: "Premier Hotel Cabin Shinjuku", city: "Tokyo · Kabukicho",
+    stay: "18–22 Nov · 4 nights · Priceline $622",
+    address: "2-40-3 Kabukicho, Shinjuku. Seibu-Shinjuku 2 min, JR East Exit ~8 min.",
+    pin: [35.69726, 139.70204],
+    history: "Kabukicho was a postwar black-market and theater district that never fully became the opera house it was named for. The east side of Shinjuku Station is the 1960s consumption machine: department stores, Omoide Yokocho’s alley bars, and Golden Gai’s six narrow lanes of six-seat counters. Shinjuku Gyoen, the old imperial garden, is the quiet counterweight — and in 2026 its maples are forecast to peak late November into early December, exactly this stay.",
+    advisor: "This hotel is a sleep base in a loud neighborhood, not a garden hotel. Use it for nights and JR departures. Do Meiji Jingu at opening, teamLab Borderless on a timed ticket, and one leaf garden (Shinjuku Gyoen or Rikugien) on a weekday morning. Golden Gai is a two-drink, cash, no-photo stop — not a bar crawl with luggage. Seats on the return and outbound cannot be chosen until 72 hours before departure; set that reminder.",
+    recs: ["Meiji Jingu at opening, then Harajuku before noon", "Shinjuku Gyoen or Rikugien for koyo — Tokyo peak is late Nov to early Dec", "teamLab Borderless, Azabudai Hills, timed entry only", "One night in Golden Gai or Omoide Yokocho, then leave", "Tsukiji outer market breakfast if you want the fish, not the old inner market myth"],
+    money: "Hotel is prepaid. Breakfast is optional. A Suica covers every metro day. Cash still wins in Golden Gai and some tachinomi."
+  },
+  {
+    id: "kyoto", name: "KANSEI Kyoto Hachijo", city: "Kyoto Station south",
+    stay: "22–27 Nov · 5 nights · Hotels.com $660",
+    address: "15-2 Higashikujo Higashi-Iwamotocho, Minami-ku. Kyoto Station Hachijo East Exit, about 6 minutes. 075-634-3933.",
+    pin: [34.9802, 135.7618],
+    history: "Kyoto was the imperial capital from 794 to 1868, and the station district is the part the old capital tried not to be. Hachijo is the south exit: buses to Fushimi, the airport coach, and a flat walk with bags. The temples that matter this week sit north and east. Fushimi Inari is the exception — 15 minutes by JR from the station, and the only major shrine that rewards a dawn start from this hotel. The 2026 color window for central Kyoto is roughly 20 Nov–7 Dec. You are sleeping inside the peak, including the heaviest weekend (22–23 Nov).",
+    advisor: "Do not fight the 22–23 Nov weekend at Kiyomizu or Arashiyama after 9:30. Those days are for Fushimi at opening, a museum, or a neighborhood walk. Save Eikando night illumination, Philosophers’ Path, and Arashiyama for Monday–Thursday. The hotel’s idea is scent, not space — confirm which building you booked if Hanare was an option. No on-site parking. Forward bags to Osaka the night before the 27th so the transfer is a day bag.",
+    recs: ["Fushimi Inari at opening, from this hotel — the one site that fits the pin", "Eikando night maples, book ahead; separate evening ticket", "Kiyomizu and Higashiyama on a weekday, in by 8:00", "Arashiyama bamboo before 8:00, then the river, not the main street", "Nishiki for food, not for a relaxing lunch after 11:30", "Nara as a half day if Osaka later feels too tight"],
+    money: "Kyoto bus day-pass only if you are north all day. Otherwise IC plus one subway. Temple tickets cluster at ¥500–1,000; night illuminations more, and they sell out."
+  },
+  {
+    id: "osaka", name: "Hotel Forza Osaka Namba Dotonbori", city: "Osaka · Dotonbori",
+    stay: "27 Nov–2 Dec · 5 nights · about $673",
+    address: "Claude Bldg 3F, 1-4-22 Dotonbori, Chuo-ku. Namba Station Exit 15B, about 5 minutes. 06-6214-3111.",
+    pin: [34.66858, 135.50339],
+    history: "Dotonbori was cut as a canal in 1612 so Toyotomi’s new merchant city could have a theater district. The canal is the point: the neon is recent, the street-food theater is old. Namba is Minami — eat, shop, leave. Osaka Castle is a concrete reconstruction with a real rampart. The city’s actual gift on this trip is geography: Nara, Kobe, and Universal are all day trips that return to the same bed.",
+    advisor: "Five nights is the flex in the itinerary. Spend one on Universal if you care — buy a dated ticket now for a weekday, 30 Nov or 1 Dec, not the weekend. Spend one on Nara or Kobe, not both unless you are moving fast. Kuromon is a morning market. Dotonbori after 19:00 is a queue. The hotel sits on the street; ask for a room off the canal if you want sleep. Breakfast is about ¥2,800 — skip it and eat standing sushi or a conbini.",
+    recs: ["Kuromon Market before 9:00", "Dotonbori walk after dark, eat earlier in a side street", "Universal Studios Japan, dated ticket, weekday", "Nara: Todai-ji and the park, back by evening", "Kobe: Kitano or the harbor, beef only if you already wanted it", "Osaka Castle park for the ramparts, not for the interior unless it is raining"],
+    money: "Forza breakfast is a bad trade versus street food. USJ is the expensive day — ticket plus express if you refuse to queue. Kansai day trips are ordinary JR or Kintetsu, not a national pass."
+  },
+  {
+    id: "hiroshima", name: "Mitsui Garden Hotel Hiroshima", city: "Hiroshima · Nakamachi",
+    stay: "2–4 Dec · 2 nights · Priceline $144",
+    address: "9-12 Nakamachi, Naka-ku. Peace Park is a short tram or a 15-minute walk. 082-240-1131.",
+    pin: [34.3927, 132.4596],
+    history: "At 8:15 on 6 August 1945 the uranium bomb detonated about 600 meters above the hospital that is now the hypocenter, a short walk from this hotel. The city was rebuilt on the same grid. The Peace Museum is the primary document; the Dome is the surviving evidence; Shukkeien, a 17th-century garden, is the other Hiroshima and is inside the late-November leaf window into early December. Miyajima’s tide, not the photo, decides whether the torii stands in water.",
+    advisor: "Two nights means one full day in the city and one on Miyajima, or a hard split. Museum plus Dome plus one garden is a full day — go to the museum when it opens, not at 14:00. Check the tide for Itsukushima before you lock the Miyajima day. The ferry is ordinary; the island is not a sunset dash from Namba. Leaves at Shukkeien and Miyajima should still be in play on 2–4 Dec.",
+    recs: ["Peace Memorial Museum at opening, then the Dome on foot", "Shukkeien if the maples are holding", "Miyajima: shrine, trail only if the weather is clear, oysters if you eat them", "Okonomiyaki in the city, not as a museum-exit gimmick"],
+    money: "Tram day ticket is worth it if you ride three times. Miyajima ferry plus shrine admission is the cash event. Hotel rate is the cheapest leg — do not ‘save’ it by skipping the museum."
+  },
+  {
+    id: "hakone", name: "Hakone Hotel", city: "Hakone · Lake Ashi",
+    stay: "4–6 Dec · 2 nights · Booking.com $498, lake view + breakfast",
+    address: "65 Hakone, Ashigarashimo District, Kanagawa. On Lake Ashi. About 35 min bus from Hakone-Yumoto or Odawara.",
+    pin: [35.2045, 139.028],
+    history: "Hakone sits on the old Tokaido barrier, a checkpoint between Edo and Kyoto. Lake Ashi is a volcanic crater lake with views of Fuji on clear days. The hotel is on the lakeshore near the pirate-ship pier and Hakone Shrine. Early December still has residual autumn color in the hills and possible snow on Fuji.",
+    advisor: "Two nights lets you do the classic loop (ropeway, Owakudani, lake cruise) without rushing, plus a recovery onsen evening. Breakfast is included — use it. Lake-view rooms are the point. Weather decides Fuji visibility; check a webcam in the morning. Buses and the Romancecar or Odakyu connection from Odawara are the practical ways in. Do not treat this as a Shinkansen stop.",
+    recs: ["Lake Ashi cruise or walk if weather is clear", "Hakone Ropeway and Owakudani if open and not too crowded", "Onsen at the hotel both evenings", "Hakone Shrine and the torii on the water"],
+    money: "Hotel prepaid with breakfast. Local buses and the lake cruise are the main extras. Hakone Free Pass can make sense if you do the full loop; price the actual buses first."
+  },
+  {
+    id: "ueno", name: "Hotel Sunroute Stellar Ueno", city: "Ueno · last two nights",
+    stay: "6–8 Dec · 2 nights · Booking.com $273.57, no breakfast",
+    address: "7-7-1 Ueno, Taito-ku. About 2–3 minutes from JR Ueno Station. Next to the station.",
+    pin: [35.7115, 139.777],
+    history: "Ueno was the Tokugawa temple town, then the 1868 battlefield where the shogunate’s last force in the city lost, then the museum and university district built on that ground. Ameya-Yokocho is a black-market street that became the ordinary market under the tracks. This is the right last base: Skyliner to Narita leaves from Keisei-Ueno, next to the JR station.",
+    advisor: "Two nights gives a buffer before the flight. No breakfast included — plan a simple one nearby or at the station. The hotel is right by the station, so the Skyliner departure is easy. Morning of the 8th is Ameyoko or a short park walk, then leave for NRT with margin.",
+    recs: ["Ameyoko for a last market walk", "Ueno Park if you want outdoor time", "Skyliner from Keisei-Ueno, reserved, around 13:40 on the 8th"],
+    money: "Hotel prepaid, no breakfast. Skyliner is about ¥2,570. Station area has easy food options."
+  }
+];
+
+const DAYS = [
+  { d: "2026-11-17", t: "Leave", title: "SFO 11:45 · AA 8410", body: "Operated by Japan Airlines. Economy O. Be at SFO international three hours out — leave the house on a Tuesday morning, not a noon hope. Confirmation AA LRKIZX / JL AH8CC3. Seats assign inside 72 hours." },
+  { d: "2026-11-18", t: "Arrive", title: "NRT 16:00 → Shinjuku Cabin", body: "Immigration + bags (~60–90 min), then N’EX to Shinjuku (~80–100 min). Hotel near East Exit. Light dinner, early night. Get Suica/Pasmo + eSIM at airport." },
+  { d: "2026-11-19", t: "Tokyo", title: "Shinjuku Gyoen + Meiji Jingu", body: "Early start for autumn colors and history. Moderate pace: 2–3 activities. Photography focus. Casual shop browse optional." },
+  { d: "2026-11-20", t: "Tokyo", title: "Senso-ji early + Ueno", body: "Classic Asakusa landmark before crowds. Then foliage or museum. Sit-down Japanese lunch." },
+  { d: "2026-11-21", t: "Tokyo", title: "Leaf garden + light day", body: "Rikugien or Korakuen for calmer autumn. Optional short shopping. Flexible recovery day." },
+  { d: "2026-11-22", t: "Move", title: "Shinkansen to Kyoto", body: "Check out Shinjuku. Tokyo/Shinagawa → Kyoto (~2h15). KANSEI near Hachijo East Exit. Weekend crowds start — no heavy Higashiyama today." },
+  { d: "2026-11-23", t: "Kyoto", title: "Fushimi, not Kiyomizu", body: "Monday holiday energy plus koyo. Inari at opening. Afternoon: station side, Kyoto Railway Museum, or a bath. Night illumination only if already booked." },
+  { d: "2026-11-24", t: "Kyoto", title: "East mountains, early", body: "Kiyomizu and the path down by mid-morning. Eikando if the night ticket is yours." },
+  { d: "2026-11-25", t: "Kyoto", title: "Arashiyama early", body: "Bamboo and the river before 8:30. Afternoon north — Kinkaku-ji only if you accept the bus — or a neighborhood you have not walked." },
+  { d: "2026-11-26", t: "Kyoto", title: "Slack day", body: "The day you did not overbook. Nishiki late morning, a temple you actually want, forward luggage to Namba." },
+  { d: "2026-11-27", t: "Move", title: "Kyoto to Dotonbori", body: "Special rapid, about 30 minutes Kyoto to Osaka, then a short metro. Forza is on the canal. Eat off the main neon the first night." },
+  { d: "2026-11-28", t: "Osaka", title: "Weekend Minami", body: "Kuromon early. Castle park if you want air. Night is the street — go before the 19:00 crush or after you have already eaten." },
+  { d: "2026-11-29", t: "Kansai", title: "Nara or Kobe", body: "Pick one. Nara is deer and Todai-ji. Kobe is the harbor and a shorter food argument. Back to the same bed." },
+  { d: "2026-11-30", t: "Osaka", title: "Universal, if booked", body: "Weekday is the point. If you are not going, this is the second day trip you skipped yesterday." },
+  { d: "2026-12-01", t: "Osaka", title: "Unscheduled on purpose", body: "Shopping, a second neighborhood, or nothing. Forward bags to Hiroshima." },
+  { d: "2026-12-02", t: "Move", title: "Shin-Osaka to Hiroshima", body: "Hikari, a bit under 90 minutes. Mitsui Garden, Nakamachi. Museum if you arrive with two hours of daylight; otherwise walk the Dome and save the museum for morning." },
+  { d: "2026-12-03", t: "Hiroshima", title: "Museum, then Miyajima", body: "Museum at opening. Miyajima against the tide table. Shukkeien if color is the priority and the island can wait until the 4th morning — it probably cannot, so choose." },
+  { d: "2026-12-04", t: "Move", title: "Hiroshima to Hakone", body: "Train via Odawara or similar to Hakone. Hakone Hotel on Lake Ashi, lake view + breakfast. Arrive and settle; onsen evening." },
+  { d: "2026-12-05", t: "Hakone", title: "Lake and loop", body: "Breakfast at hotel. Lake Ashi cruise or walk if clear. Ropeway/Owakudani or shrine if energy and weather allow. Onsen evening." },
+  { d: "2026-12-06", t: "Move", title: "Hakone to Ueno", body: "Check out. Train toward Tokyo then to Ueno. Hotel Sunroute Stellar Ueno, next to station, no breakfast. Light evening." },
+  { d: "2026-12-07", t: "Ueno", title: "Buffer day", body: "Flexible last full day. Ameyoko, Ueno Park, or light shopping. No breakfast included — station or nearby." },
+  { d: "2026-12-08", t: "Leave", title: "NRT 17:40 · AA 8409", body: "Light morning. Skyliner around 13:40 from Keisei-Ueno, terminal by 15:00. Lands SFO 09:55 the same calendar day. Seats inside 72 hours." }
+];
+
+const MINDERS = [
+  { id: "passports", phase: "pre", due: "2026-10-08", text: "Passports match the tickets", why: "Steven Lê and Thanh Le, valid through 8 Dec, one blank page each. US citizens do not need a visa for this stay." },
+  { id: "cards", phase: "pre", due: "2026-10-08", text: "Cards will not freeze in Japan", why: "Tell the issuer, or confirm a travel note is unnecessary. One working card each. A frozen card in Shinjuku is an expensive afternoon." },
+  { id: "usj", phase: "pre", due: "2026-10-08", text: "Universal: buy or strike", why: "Dated ticket for Mon 30 Nov or Tue 1 Dec. Weekend Osaka is the wrong day. If it is not bought by November, drop it." },
+  { id: "bookings", phase: "pre", due: "2026-10-08", text: "Eikando night and teamLab: book or strike", why: "Both sell timed entry. Kyoto weekend of 22–23 Nov will not have a leftover slot." },
+  { id: "insurance", phase: "pre", due: "2026-10-12", text: "Medical cover, or a conscious no", why: "Hotels look prepaid, so cancel-for-any-reason is a weak buy. Evacuation and a clinic visit are the actual risk." },
+  { id: "esim", phase: "pre", due: "2026-10-20", text: "eSIM purchased and installed (not activated)", why: "Buy before you leave (Airalo, Ubigi, or similar). Install the profile at home. Activate only on Narita Wi-Fi after landing — not in the immigration hall." },
+  { id: "apps", phase: "pre", due: "2026-10-25", text: "Key apps downloaded and logged in", why: "Google Maps, Japan Transit Planner or Navitime, Suica/Pasmo mobile app (if your phone supports it), Google Translate (offline Japanese pack), and a currency converter. Test them once at home." },
+  { id: "visitjapan", phase: "pre", due: "2026-11-01", text: "Visit Japan Web / customs pre-registration", why: "Register on Visit Japan Web for faster immigration and customs. Generate the QR codes and save screenshots. Do this a few days before departure." },
+  { id: "suica-prep", phase: "pre", due: "2026-11-05", text: "Suica / IC card plan decided", why: "Physical Welcome Suica at the airport or mobile Suica if your phone supports it. Have a plan before you land so you’re not figuring it out in the arrivals hall." },
+  { id: "forecast", phase: "pre", due: "2026-11-01", text: "Recheck leaves and tide", why: "Kyoto color is forecast 20 Nov–7 Dec. Miyajima tide decides 3 Dec. Hakone weather decides Fuji views." },
+  { id: "offline", phase: "pre", due: "2026-11-10", text: "Offline confirms, prescriptions, a contact", why: "Hotel addresses and AA LRKIZX on the phone with no signal. Three weeks of medication in original bottles. Someone at home has the same itinerary and your emergency contacts." },
+  { id: "adapter", phase: "pre", due: "2026-11-10", text: "Power adapter and cables packed", why: "Japan uses Type A/B plugs (same as US) but confirm your chargers. Bring a small power bank. Hotel USB ports are not always reliable." },
+  { id: "cash-plan", phase: "pre", due: "2026-11-12", text: "Starter yen plan", why: "About ¥20,000–30,000 cash to start (7-Eleven ATMs work with most foreign cards). IC cards won’t cover every small counter or Golden Gai." },
+  { id: "seats-out", phase: "pre", due: "2026-11-14", text: "Assign AA 8410 seats", why: "Selectable only inside 72 hours of the 17 Nov departure. Operated by Japan Airlines." },
+  { id: "meds", phase: "pre", due: "2026-11-14", text: "Medications and basics", why: "Bring enough for the full trip plus a few days. Original packaging. Common items (pain relief, stomach) are easy to buy but having your own is simpler." },
+  { id: "cash", phase: "pre", due: "2026-11-15", text: "Starter cash and a weighed bag", why: "About ¥20,000 to start. IC will not cover Golden Gai or some counters. Second bag is $100 and the limit is 50 lb / 62 in." },
+  { id: "checkin", phase: "pre", due: "2026-11-16", text: "Check in, leave for SFO by 8:30", why: "11:45 departure. International three hours out. Home mail and plants are a 16 Nov problem, not a terminal problem." },
+  { id: "seats-back", phase: "exit", due: "2026-12-05", text: "Assign AA 8409 seats", why: "Inside 72 hours of the 8 Dec departure. Do it from Hakone or Ueno, not at the Skyliner gate." },
+  { id: "skyliner", phase: "exit", due: "2026-12-07", text: "Skyliner around 13:40", why: "Keisei-Ueno to Narita. Terminal by 15:00 for a 17:40 flight. No breakfast at the hotel — eat simply first, then go." },
+  { id: "taxfree", phase: "exit", due: "2026-12-08", text: "Tax-free consumables, unopened, at customs", why: "The counter is before security. Opened snacks do not qualify. Receipts in the bag you can reach." },
+  { id: "suica-out", phase: "exit", due: "2026-12-08", text: "Refund a physical Suica before security", why: "Welcome Suica expires and is not worth the queue. A plastic card still has a deposit. After SFO, that window is shut." },
+  { id: "jetlag", phase: "post", due: "2026-12-08", text: "Land 9:55. Stay up until evening", why: "Same-calendar-day arrival. A nap after 14:00 buys you a 3am night. Light, a walk, coffee, bed at 8 or 9pm PT." },
+  { id: "charges", phase: "post", due: "2026-12-09", text: "Read the card posts", why: "Look for dynamic currency conversion — a USD charge at a bad rate — and for hotel holds that posted twice. Dispute while the receipt is on the phone." },
+  { id: "memory", phase: "post", due: "2026-12-09", text: "Back up photos and write three days", why: "The days that were actually good blur by the weekend. Note them in Kit before the inbox does." },
+  { id: "miles", phase: "post", due: "2026-12-12", text: "Miles posted, or claim them", why: "AA LRKIZX / JL AH8CC3. Partner metal often lags a few days. Claim with the ticket number if the account is still empty." },
+  { id: "ledger", phase: "post", due: "2026-12-15", text: "Close the trip ledger", why: "Hotels about $2,660 before tax, air $1,161.73, then rail and food. The gap versus what cleared is the number worth keeping." }
+];
+
+const PACKING = [
+  { id: "p-passports", cat: "Documents", text: "Passports (valid through trip, blank pages)", note: "Both travelers. Offline photo of data page." },
+  { id: "p-confirms", cat: "Documents", text: "Flight & hotel confirmations offline", note: "AA LRKIZX / JL AH8CC3 + all hotel bookings." },
+  { id: "p-vjw", cat: "Documents", text: "Visit Japan Web QR screenshots", note: "Saved in Photos / Files so they work without signal." },
+  { id: "p-insurance", cat: "Documents", text: "Insurance details (policy / card)", note: "Screenshot of medical cover and emergency number." },
+  { id: "p-cards", cat: "Money", text: "Credit cards (2 different networks)", note: "Travel note set if required. One primary + backup each." },
+  { id: "p-cash", cat: "Money", text: "Starter yen (~¥15,000–20,000)", note: "Day-1 transit, snacks, cash-only spots. IC won’t cover everything." },
+  { id: "p-suica", cat: "Money", text: "Suica plan locked in", note: "Mobile Suica (iPhone) or physical Welcome Suica at NRT. Decide before landing." },
+  { id: "p-phones", cat: "Electronics", text: "Phones, chargers, cables", note: "Japan Type A plugs = US plugs. No adapter needed for most chargers." },
+  { id: "p-powerbanks", cat: "Electronics", text: "Power banks (carry-on only)", note: "Max 2 per person. Cannot check. Plane use/charging restricted." },
+  { id: "p-esim", cat: "Electronics", text: "eSIM installed (activate after landing)", note: "Profile ready at home. Switch on after immigration on airport Wi-Fi." },
+  { id: "p-headphones", cat: "Electronics", text: "Headphones / earbuds", note: "Long flights + quiet carriages." },
+  { id: "p-shoes", cat: "Clothing", text: "Broken-in walking shoes + easy-off pair", note: "Lots of walking + frequent shoe removal. No brand-new shoes." },
+  { id: "p-layers", cat: "Clothing", text: "Layers: long-sleeve tops, sweater/fleece, light-medium jacket", note: "Nov 17–Dec 8: daytime ~50–65°F, cooler evenings. Scarf useful." },
+  { id: "p-pants", cat: "Clothing", text: "Long pants (2–3 pairs)", note: "Comfortable walking pairs + one nicer option." },
+  { id: "p-underwear", cat: "Clothing", text: "Underwear & socks (laundry cycle)", note: "Pack ~7–10 days and plan a wash, or bring more." },
+  { id: "p-rain", cat: "Clothing", text: "Compact umbrella or light rain shell", note: "Showers possible. Better than thin konbini umbrellas." },
+  { id: "p-sleep", cat: "Clothing", text: "Sleepwear + light base layers", note: "Hotels can run cool." },
+  { id: "p-meds", cat: "Health", text: "Prescriptions in original packaging + list", note: "Full trip + buffer. Note any Japan restrictions." },
+  { id: "p-basics", cat: "Health", text: "Pain relief, stomach, blister care, sanitizer", note: "Small personal kit. Pharmacies are good but English is limited." },
+  { id: "p-toiletries", cat: "Health", text: "Preferred toiletries (travel sizes)", note: "Many hotels supply basics." },
+  { id: "p-daybag", cat: "Misc", text: "Day pack / crossbody", note: "Daily use while big bags stay at hotels or are forwarded." },
+  { id: "p-reuse", cat: "Misc", text: "Reusable shopping bag + small towel", note: "Useful for shopping and some restrooms." },
+  { id: "p-multi", cat: "Misc", text: "Multi-port USB charger", note: "Hotel ports vary. One good charger covers phones + power banks." }
+];
+
+const KEY = "honshu-2026-kit";
+function load() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch { return {}; } }
+function save(s) { localStorage.setItem(KEY, JSON.stringify(s)); }
+let state = load();
+state.checks = state.checks || {};
+state.notes = state.notes || {};
+state.extra = state.extra || [];
+state.dayNotes = state.dayNotes || {};
+state.fx = state.fx || { rate: 158.10, side: "jpy", raw: "1000", spread: 0 };
+state.fx.side = "jpy";
+function asItems(v) {
+  if (Array.isArray(v)) return v.filter(x => x && x.text).map(x => ({ text: String(x.text), done: !!x.done }));
+  if (typeof v === "string" && v.trim()) return [{ text: v.trim(), done: false }];
+  return [];
+}
+// Force-seed full-trip day options (Tokyo already present; add the rest)
+(function seedAllDays() {
+  const seeds = {
+    "2026-11-18": [
+      { text: "★ Recommended: N’EX to Shinjuku + light dinner near hotel", done: false },
+      { text: "Option: Keisei Skyliner via Ueno", done: false },
+      { text: "Option: Airport limousine bus", done: false }
+    ],
+    "2026-11-19": [
+      { text: "★ Recommended: Shinjuku Gyoen (early foliage) → Meiji Jingu → light Harajuku/Omotesando browse", done: false },
+      { text: "Option: Yoyogi Park instead of/with Meiji", done: false },
+      { text: "Option: Skip shopping; add Shinjuku observation deck", done: false }
+    ],
+    "2026-11-20": [
+      { text: "★ Recommended: Senso-ji (arrive ~8:00) → sit-down lunch → Ueno Park (foliage / optional museum)", done: false },
+      { text: "Option: Rikugien or Koishikawa Korakuen instead of Ueno", done: false },
+      { text: "Option: Sumida River / Skytree exterior only", done: false }
+    ],
+    "2026-11-21": [
+      { text: "★ Recommended: Rikugien or Koishikawa Korakuen (calmer autumn) → optional short Shinjuku/Shibuya browse", done: false },
+      { text: "Option: Rest day + depachika food floors", done: false },
+      { text: "Option: Day trip Kamakura / Enoshima", done: false }
+    ],
+    "2026-11-22": [
+      { text: "★ Recommended: Morning bakery/light → Shinkansen Tokyo or Shinagawa → Kyoto → KANSEI (Hachijo East)", done: false },
+      { text: "Note: Reserve seats if possible; IC card works for local but not Shinkansen", done: false }
+    ],
+    "2026-11-23": [
+      { text: "★ Recommended: Fushimi Inari at opening → afternoon station-side or Railway Museum → optional night illumination if booked", done: false },
+      { text: "Option: Quieter temple or neighborhood walk instead of Inari", done: false },
+      { text: "Option: Rest + bath near hotel", done: false }
+    ],
+    "2026-11-24": [
+      { text: "★ Recommended: Kiyomizu-dera early + Higashiyama walk down → optional Eikando night if ticketed", done: false },
+      { text: "Option: Philosopher’s Path + quieter east temples instead of full Kiyomizu", done: false },
+      { text: "Option: Museum or indoor day if weather/crowds poor", done: false }
+    ],
+    "2026-11-25": [
+      { text: "★ Recommended: Arashiyama bamboo + river early → afternoon Kinkaku-ji or north neighborhood", done: false },
+      { text: "Option: Skip Kinkaku-ji; stay longer in Arashiyama or do a different north site", done: false },
+      { text: "Option: Lighter day + Nishiki or local food focus", done: false }
+    ],
+    "2026-11-26": [
+      { text: "★ Recommended: Slack day — Nishiki late morning + one temple you actually want → forward bags to Osaka", done: false },
+      { text: "Option: Full rest / depachika / neighborhood walk only", done: false },
+      { text: "Option: Half-day Nara if energy is high", done: false }
+    ],
+    "2026-11-27": [
+      { text: "★ Recommended: Special rapid Kyoto → Osaka → short metro to Forza Namba → eat off the main neon", done: false },
+      { text: "Option: Slightly later departure if you want a light morning in Kyoto", done: false }
+    ],
+    "2026-11-28": [
+      { text: "★ Recommended: Kuromon Market early → Osaka Castle park if you want air → night street before/after the crush", done: false },
+      { text: "Option: Quieter neighborhood (e.g. Nakazakicho or east side) instead of full Minami night", done: false },
+      { text: "Option: Indoor or food-focused lighter day", done: false }
+    ],
+    "2026-11-29": [
+      { text: "★ Recommended: Nara half-day (deer + Todai-ji) or Kobe (harbor + food)", done: false },
+      { text: "Option: Stay in Osaka — second neighborhood or shopping browse", done: false },
+      { text: "Option: Rest day near Namba", done: false }
+    ],
+    "2026-11-30": [
+      { text: "★ Recommended: Universal Studios if already booked (weekday)", done: false },
+      { text: "Option: Second day-trip you skipped yesterday (Nara/Kobe/other)", done: false },
+      { text: "Option: Osaka neighborhood + food day", done: false }
+    ],
+    "2026-12-01": [
+      { text: "★ Recommended: Unscheduled — shopping browse, second neighborhood, or nothing → forward bags to Hiroshima", done: false },
+      { text: "Option: One focused sight you still want in Osaka", done: false }
+    ],
+    "2026-12-02": [
+      { text: "★ Recommended: Hikari Shin-Osaka → Hiroshima → Mitsui Garden. Dome walk if daylight; museum next morning if late", done: false },
+      { text: "Option: Earlier train for more daylight at the Peace Park", done: false }
+    ],
+    "2026-12-03": [
+      { text: "★ Recommended: Peace Memorial Museum at opening → Miyajima against the tide table", done: false },
+      { text: "Option: Shukkeien garden for color if Miyajima tide is poor; do island next morning", done: false },
+      { text: "Option: Museum + city only if weather or energy is low", done: false }
+    ],
+    "2026-12-04": [
+      { text: "★ Recommended: Hiroshima → Hakone (via Odawara). Check into Hakone Hotel, lake view + breakfast. Onsen evening", done: false },
+      { text: "Option: Earlier train for more daylight on arrival", done: false }
+    ],
+    "2026-12-05": [
+      { text: "★ Recommended: Breakfast at hotel. Lake Ashi cruise or walk if clear. Ropeway/Owakudani or shrine. Onsen evening", done: false },
+      { text: "Option: Quieter lake-side day if weather is poor", done: false },
+      { text: "Option: Full rest / onsen only", done: false }
+    ],
+    "2026-12-06": [
+      { text: "★ Recommended: Check out Hakone → train toward Tokyo → Ueno. Hotel Sunroute Stellar Ueno (next to station, no breakfast)", done: false },
+      { text: "Option: Slightly later departure if you want a light morning in Hakone", done: false }
+    ],
+    "2026-12-07": [
+      { text: "★ Recommended: Flexible buffer day — Ameyoko, Ueno Park, or light shopping. No breakfast included", done: false },
+      { text: "Option: One last short sight if energy is high", done: false },
+      { text: "Option: Full rest near the station", done: false }
+    ],
+    "2026-12-08": [
+      { text: "★ Recommended: Light breakfast nearby → Ameyoko short walk → Skyliner ~13:40 to NRT (terminal by 15:00) for 17:40 flight", done: false },
+      { text: "Option: Skip Ameyoko for more airport buffer", done: false }
+    ]
+  };
+  Object.keys(seeds).forEach(d => {
+    const cur = asItems(state.dayNotes[d]);
+    const hasRec = cur.some(x => x.text && x.text.indexOf("★ Recommended") === 0);
+    if (!hasRec) {
+      state.dayNotes[d] = seeds[d].concat(cur.filter(x => !seeds[d].some(s => s.text === x.text)));
+    }
+  });
+  save(state);
+})();
+function sortOpenFirst(list) {
+  return list.map((x, i) => ({ ...x, _i: i })).sort((a, b) => (a.done === b.done ? a._i - b._i : a.done ? 1 : -1));
+}
+function esc(s) {
+  return String(s).replace(/[&<>"]/g, function (c) {
+    if (c === "&") return "&" + "amp;";
+    if (c === "<") return "&" + "lt;";
+    if (c === ">") return "&" + "gt;";
+    return "&" + "quot;";
+  });
+}
+function checkRows(list, attr) {
+  const rows = sortOpenFirst(list);
+  if (!rows.length) return `<p class="small">Nothing yet. Add one below — checked items sink to the bottom.</p>`;
+  return rows.map(x => `
+    <label class="check">
+      <input type="checkbox" ${attr}="${x._i}" ${x.done ? "checked" : ""}/>
+      <span${x.done ? ' style="opacity:.5;text-decoration:line-through"' : ""}>${esc(x.text)}</span>
+      <button type="button" class="ghost" style="margin-left:auto;padding:4px 8px;font-size:12px" data-detail-idx="${x._i}">Details</button>
+    </label>`).join("");
+}
+Object.keys(state.notes).forEach(k => { state.notes[k] = asItems(state.notes[k]); });
+Object.keys(state.dayNotes).forEach(k => { state.dayNotes[k] = asItems(state.dayNotes[k]); });
+state.extra = asItems(state.extra);
+state.who = state.who || "Steven";
+state.synced = state.synced || "";
+state.font = [14, 16, 18, 20, 22].includes(state.font) ? state.font : 16;
+state.expenses = Array.isArray(state.expenses) ? state.expenses : [];
+state.dayMemo = state.dayMemo || {};
+
+const CATS = [
+  { id: "food", label: "Food" },
+  { id: "transport", label: "Transport" },
+  { id: "lodging", label: "Lodging" },
+  { id: "tickets", label: "Tickets" },
+  { id: "shopping", label: "Shopping" },
+  { id: "other", label: "Other" }
+];
+function catLabel(id) { const c = CATS.find(x => x.id === id); return c ? c.label : id; }
+function applyFont() {
+  document.documentElement.setAttribute("data-fs", String(state.font));
+  document.querySelectorAll("#fs-ctl button").forEach(b => b.classList.toggle("on", Number(b.dataset.fs) === state.font));
+}
+applyFont();
+document.getElementById("fs-ctl").addEventListener("click", e => {
+  const b = e.target.closest("button");
+  if (!b) return;
+  state.font = Number(b.dataset.fs);
+  save(state);
+  applyFont();
+});
+
+function sharePacket() {
+  return {
+    v: 2,
+    at: new Date().toISOString(),
+    who: state.who || "Steven",
+    checks: state.checks,
+    notes: state.notes,
+    dayNotes: state.dayNotes,
+    extra: state.extra,
+    expenses: state.expenses,
+    dayMemo: state.dayMemo,
+    font: state.font,
+    fx: { rate: state.fx.rate, spread: state.fx.spread }
+  };
+}
+function encodeShare() {
+  const json = JSON.stringify(sharePacket());
+  return "HONSHU1:" + btoa(unescape(encodeURIComponent(json)));
+}
+function decodeShare(text) {
+  const i = text.indexOf("HONSHU1:");
+  if (i < 0) throw new Error("That paste has no trip update.");
+  const raw = text.slice(i + 8).trim().split(/\s/)[0];
+  return JSON.parse(decodeURIComponent(escape(atob(raw))));
+}
+function mergeShare(p) {
+  Object.entries(p.checks || {}).forEach(([k, v]) => { if (v) state.checks[k] = true; });
+  ["notes", "dayNotes"].forEach(bucket => {
+    Object.entries(p[bucket] || {}).forEach(([k, v]) => {
+      const incoming = asItems(v);
+      if (!incoming.length) return;
+      const cur = asItems(state[bucket][k]);
+      incoming.forEach(x => {
+        const hit = cur.find(e => e.text === x.text);
+        if (!hit) cur.push(x);
+        else if (x.done) hit.done = true;
+      });
+      state[bucket][k] = cur;
+    });
+  });
+  (p.extra || []).forEach(x => {
+    const hit = state.extra.find(e => e.text === x.text);
+    if (!hit) state.extra.push(x);
+    else if (x.done) hit.done = true;
+  });
+  if (p.fx && p.fx.rate) state.fx.rate = p.fx.rate;
+  (p.expenses || []).forEach(x => {
+    if (!x || !x.id) return;
+    const hit = state.expenses.find(e => e.id === x.id);
+    if (!hit) state.expenses.push(x);
+    else Object.assign(hit, x);
+  });
+  Object.entries(p.dayMemo || {}).forEach(([k, v]) => {
+    if (typeof v === "string" && v.trim()) state.dayMemo[k] = v;
+  });
+  state.synced = (p.who || "other") + " · " + (p.at || "").slice(0, 16).replace("T", " ");
+  save(state);
+}
+function bothCard() {
+  return `<div class="card">
+    <div class="tag gold">Two phones, one trip</div>
+    <h2>Steven and Thanh</h2>
+    <p class="meta">Same file on both phones. This phone is signed in as ${state.who}. Checks merge. A note from the other phone is appended, not overwritten.</p>
+    <div class="row">
+      <button class="pill ${state.who === "Steven" ? "on" : ""}" data-who="Steven">Steven</button>
+      <button class="pill ${state.who === "Thanh" ? "on" : ""}" data-who="Thanh">Thanh</button>
+    </div>
+    <p class="small">AirDrop japan-trip.html once. On each iPhone: Safari, share, Add to Home Screen. After either of you checks a minder or writes a note, send an update in Messages and paste it on the other phone.</p>
+    <button class="go" id="send-sync" type="button">Send update</button>
+    <textarea id="sync-in" placeholder="Paste the other phone's update"></textarea>
+    <button class="ghost" id="apply-sync" type="button">Apply update</button>
+    <p class="small" id="sync-status">${state.synced ? "Last merge " + state.synced : "No merge yet. The schedule and tips are already on both copies."}</p>
+  </div>`;
+}
+function bindBoth(el) {
+  el.querySelectorAll("[data-who]").forEach(b => b.onclick = () => {
+    state.who = b.dataset.who;
+    save(state);
+    document.querySelector(".kicker").textContent = state.who + " · shared with " + (state.who === "Steven" ? "Thanh" : "Steven");
+    renderKit();
+  });
+  const send = el.querySelector("#send-sync");
+  if (send) send.onclick = async () => {
+    const packet = encodeShare();
+    const note = "Honshu update from " + state.who + ". In the trip app, Kit → paste → Apply.\n" + packet;
+    try {
+      if (navigator.share) await navigator.share({ title: "Honshu update", text: note });
+      else throw new Error("no share");
+    } catch {
+      try { await navigator.clipboard.writeText(note); send.textContent = "Copied — send in Messages"; }
+      catch { alert(note); }
+    }
+  };
+  const apply = el.querySelector("#apply-sync");
+  if (apply) apply.onclick = () => {
+    try {
+      mergeShare(decodeShare(el.querySelector("#sync-in").value));
+      renderToday();
+      renderKit();
+    } catch (err) { alert(err.message || "Could not read that update."); }
+  };
+}
+function money(n, cur) {
+  if (!isFinite(n)) return "—";
+  if (cur === "jpy") return "¥" + Math.round(n).toLocaleString("en-US");
+  return "$" + n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+function fxConvert() {
+  const rate = Number(state.fx.rate) || 158.10;
+  const spread = Number(state.fx.spread) || 0;
+  const used = rate / (1 + spread / 100);
+  const amt = parseFloat(String(state.fx.raw).replace(/,/g, "")) || 0;
+  if (state.fx.side === "jpy") return { amt, other: amt / used, used, rate };
+  return { amt, other: amt * used, used, rate };
+}
+function fxCard() {
+  const f = fxConvert();
+  const from = state.fx.side === "jpy" ? "JPY" : "USD";
+  const to = state.fx.side === "jpy" ? "USD" : "JPY";
+  const chips = state.fx.side === "jpy"
+    ? [500, 1000, 1500, 2800, 3250, 10300, 14070]
+    : [10, 20, 50, 100, 200];
+  return `
+    <div class="card" id="fx">
+      <div class="row" style="justify-content:space-between;align-items:center">
+        <div class="tag gold">JPY ↔ USD</div>
+        <button class="pill" id="fx-flip">${from} → ${to}</button>
+      </div>
+      <div class="fx-out">${state.fx.side === "jpy" ? money(f.other, "usd") : money(f.other, "jpy")}</div>
+      <div class="fx-in">${state.fx.side === "jpy" ? money(f.amt, "jpy") : money(f.amt, "usd")} at ¥${f.used.toFixed(2)}</div>
+      <div class="chips">
+        ${chips.map(n => `<button type="button" data-chip="${n}">${state.fx.side === "jpy" ? "¥" + n.toLocaleString("en-US") : "$" + n}</button>`).join("")}
+      </div>
+      <div class="keys">
+        ${[1,2,3,"AC",4,5,6,"←",7,8,9,"00",0].map(k => `<button type="button" data-key="${k}">${k}</button>`).join("")}
+      </div>
+      <div class="row" style="margin-top:10px;align-items:center">
+        <span class="small">¥ per $</span>
+        <input class="fx-rate" id="fx-rate" inputmode="decimal" value="${state.fx.rate}" />
+        <button class="pill ${state.fx.spread === 0 ? "on" : ""}" data-spread="0">mid</button>
+        <button class="pill ${state.fx.spread === 2.5 ? "on" : ""}" data-spread="2.5">card −2.5%</button>
+      </div>
+      <p class="small">Mid is the 8 Oct 2026 spot, about ¥158.1, not a November forward. A no-foreign-fee card still clears near mid. The 2.5% key is the airport-booth haircut: fewer yen per dollar, so the same menu price costs more.</p>
+    </div>`;
+}
+function bindFx(root) {
+  const box = root.querySelector("#fx");
+  if (!box) return;
+  const redraw = () => { save(state); if (document.getElementById("view-today").classList.contains("on")) renderToday(); if (document.getElementById("view-kit").classList.contains("on")) renderKit(); };
+  box.querySelector("#fx-flip").onclick = () => { state.fx.side = state.fx.side === "jpy" ? "usd" : "jpy"; state.fx.raw = state.fx.side === "jpy" ? "1000" : "20"; redraw(); };
+  box.querySelectorAll("[data-chip]").forEach(b => b.onclick = () => { state.fx.raw = b.dataset.chip; redraw(); });
+  box.querySelectorAll("[data-key]").forEach(b => b.onclick = () => {
+    const k = b.dataset.key;
+    if (k === "AC") state.fx.raw = "0";
+    else if (k === "←") state.fx.raw = state.fx.raw.slice(0, -1) || "0";
+    else {
+      if (state.fx.raw === "0") state.fx.raw = "";
+      if (state.fx.raw.length < 9) state.fx.raw += k;
+    }
+    redraw();
+  });
+  box.querySelectorAll("[data-spread]").forEach(b => b.onclick = () => { state.fx.spread = Number(b.dataset.spread); redraw(); });
+  const rate = box.querySelector("#fx-rate");
+  rate.onchange = () => { const n = parseFloat(rate.value); if (n > 0) state.fx.rate = Math.round(n * 100) / 100; redraw(); };
+}
+
+function fmt(iso) {
+  const [y,m,d] = iso.split("-").map(Number);
+  return new Date(y, m-1, d).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+}
+function todayISO() {
+  const n = new Date();
+  const local = new Date(n.getTime() - n.getTimezoneOffset() * 60000);
+  return local.toISOString().slice(0, 10);
+}
+function daysUntil(iso) {
+  const a = new Date(iso + "T12:00:00");
+  const b = new Date(); b.setHours(12, 0, 0, 0);
+  return Math.round((a - b) / 86400000);
+}
+function minderStatus(m) {
+  const left = daysUntil(m.due);
+  if (state.checks[m.id]) return { label: "done", hot: false };
+  if (left < 0) return { label: "overdue", hot: true };
+  if (left === 0) return { label: "today", hot: true };
+  if (left <= 7) return { label: "in " + left + "d", hot: true };
+  return { label: fmt(m.due), hot: false };
+}
+function minderRow(m) {
+  const s = minderStatus(m);
+  return `<label class="check"><input type="checkbox" data-c="${m.id}" ${state.checks[m.id] ? "checked" : ""}/><span><span class="tag ${s.hot ? "" : "gold"}">${s.label}</span> ${m.text}<span class="meta" style="display:block">${m.why}</span></span></label>`;
+}
+function dueMinders() {
+  return MINDERS.filter(m => !state.checks[m.id] && daysUntil(m.due) <= 0);
+}
+function installCard() {
+  return `<div class="card">
+    <div class="tag gold">Home screen</div>
+    <h2>Pin Honshu</h2>
+    <p>The file holds the AA confirmation. Do not put it on a public page. On each iPhone:</p>
+    <ul class="clean">
+      <li>Save japan-trip.html into Files, iCloud Drive, a folder named Honshu.</li>
+      <li>Shortcuts → new shortcut → Add Action → Open File → pick that html.</li>
+      <li>Share the shortcut → Add to Home Screen. Name it Honshu.</li>
+      <li>Press and hold the home screen, drag the icon onto the first page.</li>
+    </ul>
+    <p class="small">Open it from that icon, not from Mail. Checks and notes stay on that phone until Kit → Send update. If the shortcut opens a preview with no buttons, use the share sheet and choose Safari.</p>
+  </div>`;
+}
+function dueCard() {
+  const due = dueMinders();
+  const next = MINDERS.filter(m => !state.checks[m.id] && daysUntil(m.due) > 0).slice(0, 2);
+  const rows = due.length ? due : next;
+  return `<div class="card"><div class="tag ${due.length ? "" : "gold"}">${due.length ? "Due now" : "Next minders"}</div><h3>${due.length ? due.length + " open" : "Nothing overdue"}</h3>
+    ${rows.map(minderRow).join("")}
+    <p class="small">Pre-trip, the Narita exit, and the SFO landing live in Kit. Send an update from Kit when a check should show on the other phone.</p></div>`;
+}
+function bindChecks(el) {
+  el.querySelectorAll("[data-c]").forEach(box => box.onchange = () => {
+    state.checks[box.dataset.c] = box.checked;
+    save(state);
+    if (document.getElementById("view-kit").classList.contains("on")) renderKit();
+    else renderToday();
+  });
+}
+
+function renderToday() {
+  const el = document.getElementById("view-today");
+  const start = daysUntil("2026-11-17");
+  const end = daysUntil("2026-12-08");
+  const now = todayISO();
+  const day = DAYS.find(x => x.d === now);
+  const next = DAYS.find(x => x.d >= now) || DAYS[DAYS.length - 1];
+  const phase = start > 0 ? `${start} days to departure` : end >= 0 ? "You are on the trip" : "Trip complete";
+  el.innerHTML = `
+    ${fxCard()}
+    ${installCard()}
+    ${dueCard()}
+    <div class="statgrid">
+      <div class="stat"><b>${phase}</b><span>from 8 Oct 2026 frame</span></div>
+      <div class="stat"><b>7 bases</b><span>21 days door to door</span></div>
+      <div class="stat"><b>$2,660</b><span>hotels on the note, pre-tax</span></div>
+      <div class="stat"><b>$1,162</b><span>partner air, AA LRKIZX</span></div>
+    </div>
+    <div class="card">
+      <div class="tag gold">What unfolds</div>
+      <h2>${day ? day.title : next.title}</h2>
+      <p class="meta">${day ? fmt(day.d) : "Next · " + fmt(next.d)}</p>
+      <p>${day ? day.body : "Nothing on the calendar today. The constraint that will matter is not the hotel list — it is Kyoto’s leaf weekend and the Universal ticket. Those are decidable now."}</p>
+    </div>
+    <div class="card">
+      <h3>Rail, decided</h3>
+      <p>A nationwide JR Pass does not fit the remaining hops cleanly. Buy point-to-point. Nozomi is faster and not pass-eligible anyway.</p>
+      <ul class="clean">
+        <li>NRT–Shinjuku N’EX, about ¥3,250 — <a href="https://www.jreast.co.jp/multi/en/nex/" target="_blank">JR East N’EX</a></li>
+        <li>Tokyo–Kyoto Hikari, about ¥13,850 reserved — <a href="https://smart-ex.jp/en/" target="_blank">SmartEX</a> (Tokaido Shinkansen)</li>
+        <li>Kyoto–Osaka special rapid, about ¥580 — IC card / station (local JR, no advance site needed)</li>
+        <li>Shin-Osaka–Hiroshima, about ¥10,300 — <a href="https://smart-ex.jp/en/" target="_blank">SmartEX</a> (Sanyo Shinkansen)</li>
+        <li>Hiroshima → Hakone (via Odawara area) — mix of JR + local/Odakyu or bus; check day-of connections</li>
+        <li>Hakone → Ueno — train toward Tokyo then local to Ueno</li>
+        <li>Ueno–NRT Skyliner about ¥2,570 — <a href="https://www.keisei.co.jp/keisei/tetudou/skyliner/us/" target="_blank">Keisei Skyliner</a></li>
+      </ul>
+      <p class="small">Fares are published ordinary levels, per person, and move. Reserved-seat fees sit on top of some base fares. Two people, so double the long hops. Tap a chip on the converter for the dollar figure. SmartEX covers most Tokaido/Sanyo Shinkansen reserved seats; buy N’EX and Skyliner on their own sites or at the airport/station. Hakone access is bus/local after the main rail.</p>
+    </div>
+    <div class="card">
+      <h3>Confirmations</h3>
+      <p class="meta">AA ${TRIP.confirm.aa} · JL ${TRIP.confirm.jl} · partner ticket ${TRIP.flights[0].code} / ${TRIP.flights[1].code}, paid $${TRIP.confirm.fare.toFixed(2)}. First bag free, second $100, 50 lb / 62 in. Seats not selectable until 72 hours out.</p>
+    </div>`;
+  bindFx(el);
+  bindChecks(el);
+}
+
+function renderPlan() {
+  const el = document.getElementById("view-plan");
+  const DETAILS = {
+    "★ Recommended: N’EX to Shinjuku + light dinner near hotel": `
+      <p><strong>Why this is the top pick for arrival day</strong></p>
+      <p>After a long flight you want the least friction. N’EX is reserved, air-conditioned, and deposits you at Shinjuku Station — a short walk or cheap taxi from the hotel. It matches a moderate pace and keeps the evening simple so you can sleep and adjust.</p>
+      <p><strong>What to expect</strong></p>
+      <ul class="clean">
+        <li>Land ~16:00. Immigration + bags usually 60–90 min on a midweek afternoon.</li>
+        <li>Activate eSIM on airport Wi-Fi; get a physical Suica (or mobile Suica) at the JR machines before the train.</li>
+        <li>N’EX to Shinjuku: ~80–100 min, about ¥3,250 ordinary reserved. Tap IC or buy a ticket.</li>
+        <li>From East Exit: 5–8 min walk or short taxi into Kabukicho to Premier Hotel Cabin.</li>
+        <li>Light dinner nearby (convenience store, simple izakaya, or station bento). Early night.</li>
+      </ul>
+      <p><strong>Pluses</strong>: Direct-ish, comfortable seats, luggage space, predictable timing, IC-friendly.<br>
+      <strong>Minuses</strong>: Slightly slower than Skyliner + transfer; can have queues for reserved seats at peak.<br>
+      <strong>Adjacent</strong>: Airport shops for water/snacks; hotel lobby is the only “activity” you need.</p>
+      <p><a href="https://www.google.com/maps/dir/?api=1&origin=Narita+Airport&destination=Shinjuku+Station&travelmode=transit" target="_blank">Maps: NRT → Shinjuku Station</a></p>
+      <p><a href="https://www.jreast.co.jp/multi/en/nex/" target="_blank">Buy N’EX tickets (JR East)</a></p>
+      <p class="small">Taxi from NRT is ¥25–35k — not worth it with light luggage.</p>
+    `,
+    "Option: Keisei Skyliner via Ueno": `
+      <p><strong>Why consider it</strong></p>
+      <p>Skyliner is faster to the city (Ueno). If N’EX looks crowded or delayed, this can get you moving sooner. Still ends with a simple JR transfer to Shinjuku.</p>
+      <p><strong>What to expect</strong></p>
+      <ul class="clean">
+        <li>Skyliner Narita → Ueno ~40–45 min.</li>
+        <li>Transfer at Ueno to Yamanote or Keihin-Tohoku → Shinjuku ~25 min.</li>
+        <li>Total time often similar or a bit faster; same Suica works.</li>
+        <li>Hotel arrival still early evening; same light dinner plan.</li>
+      </ul>
+      <p><strong>Pluses</strong>: Faster first leg, modern train.<br>
+      <strong>Minuses</strong>: Extra transfer with luggage after a long flight.<br>
+      <strong>Adjacent</strong>: Ueno Station has good food options if you want a quick bite before the last leg.</p>
+      <p><a href="https://www.google.com/maps/dir/?api=1&origin=Narita+Airport&destination=Ueno+Station&travelmode=transit" target="_blank">Maps: NRT → Ueno</a></p>
+    `,
+    "Option: Airport limousine bus": `
+      <p><strong>Why consider it</strong></p>
+      <p>Zero transfers and zero train navigation on arrival day. Good if you prefer sitting with luggage handled and don’t mind a longer ride.</p>
+      <p><strong>What to expect</strong></p>
+      <ul class="clean">
+        <li>Buy ticket at the airport limousine counter.</li>
+        <li>Direct bus toward Shinjuku area. Luggage under the bus.</li>
+        <li>Often 90–120+ min depending on traffic. Drops near major Shinjuku hotels/stations.</li>
+        <li>Still early enough for a simple dinner and bed.</li>
+      </ul>
+      <p><strong>Pluses</strong>: No transfers, no platform navigation.<br>
+      <strong>Minuses</strong>: Slower, traffic-dependent, less frequent than trains.<br>
+      <strong>Adjacent</strong>: Airport counters are well signed in English.</p>
+    `,
+    "★ Recommended: Shinjuku Gyoen (early foliage) → Meiji Jingu → light Harajuku/Omotesando browse": `
+      <p><strong>Why this fits the first full day</strong></p>
+      <p>Late November is prime for Tokyo ginkgo and maple. Shinjuku Gyoen is close to the hotel, has varied garden styles, and is quieter before 10:00. Meiji Jingu adds history and a forested walk without a long transit. Light browsing keeps shopping casual and early so purchases don’t travel with you for weeks. Matches 2–3 activities, photography, Japanese food, and crowd avoidance.</p>
+      <p><strong>What to expect</strong></p>
+      <ul class="clean">
+        <li><strong>7:30–8:00 start</strong>. Short walk or subway to <a href="https://www.google.com/maps/search/?api=1&query=Shinjuku+Gyoen+National+Garden" target="_blank">Shinjuku Gyoen</a> (opens 9:00, last entry ~16:00 in autumn, ¥500). Plane trees, ginkgo, maples; Japanese, French, and English sections. Momijiyama maples often peak later in the window.</li>
+        <li>JR Yamanote or short subway/walk to <a href="https://www.google.com/maps/search/?api=1&query=Meiji+Jingu" target="_blank">Meiji Jingu</a> (Harajuku entrance). Free, forested grounds, large torii, historical shrine to Emperor Meiji. Calmer early. Inner garden has a small extra fee if open.</li>
+        <li>Afternoon: light casual look in Harajuku / Omotesando or back in Shinjuku (Uniqlo, GU, small shops). Not a shopping day.</li>
+        <li>Sit-down lunch (tonkatsu, soba, or set meal) near Meiji or Harajuku. Bakery take-out on the way back.</li>
+      </ul>
+      <p><strong>Pluses</strong>: Close to hotel, strong autumn color, history, good photos, early = fewer people, English signage at major sites.<br>
+      <strong>Minuses</strong>: Gyoen closes Mondays (check the calendar); color timing varies by tree type.<br>
+      <strong>Adjacent</strong>: Yoyogi Park next to Meiji; Harajuku station area for cafes; Shinjuku Gyoen has a small greenhouse and rest houses.</p>
+      <p class="small">IC card for any short rides. Prefer the early window.</p>
+    `,
+    "Option: Yoyogi Park instead of/with Meiji": `
+      <p><strong>Why consider it</strong></p>
+      <p>Yoyogi is open, free, and immediately adjacent to Meiji Jingu and Harajuku. It gives more open-air autumn trees and people-watching without the formality of the shrine.</p>
+      <p><strong>What to expect</strong></p>
+      <ul class="clean">
+        <li>After or instead of the shrine, walk the paths and lawns of <a href="https://www.google.com/maps/search/?api=1&query=Yoyogi+Park" target="_blank">Yoyogi Park</a>.</li>
+        <li>Good photo spots, less structured. Can combine easily with Meiji (same area).</li>
+        <li>Same early timing keeps it pleasant.</li>
+      </ul>
+      <p><strong>Pluses</strong>: Free, easy, flexible length.<br>
+      <strong>Minuses</strong>: Less “historical landmark” than Meiji; can still get busy later.<br>
+      <strong>Adjacent</strong>: Harajuku street food and cafes right outside; Meiji forest is steps away.</p>
+    `,
+    "Option: Skip shopping; add Shinjuku observation deck": `
+      <p><strong>Why consider it</strong></p>
+      <p>If you want to stay light on purchases and prefer views/photos over browsing, the free Tokyo Metropolitan Government Building observatory (or other Shinjuku decks) gives city and possible Fuji views without extra luggage.</p>
+      <p><strong>What to expect</strong></p>
+      <ul class="clean">
+        <li>Skip the Harajuku browse.</li>
+        <li>Afternoon or early evening at <a href="https://www.google.com/maps/search/?api=1&query=Tokyo+Metropolitan+Government+Building" target="_blank">TMG Building</a> free observatories (security check, good views).</li>
+        <li>Clear days can show Fuji. Photography-friendly.</li>
+      </ul>
+      <p><strong>Pluses</strong>: Free or low cost, no shopping, high photo value.<br>
+      <strong>Minuses</strong>: Weather-dependent; can have short queues.<br>
+      <strong>Adjacent</strong>: Shinjuku Station area food and the hotel are close.</p>
+    `,
+    "★ Recommended: Senso-ji (arrive ~8:00) → sit-down lunch → Ueno Park (foliage / optional museum)": `
+      <p><strong>Why this works as a classic Tokyo day</strong></p>
+      <p>Senso-ji is Tokyo’s oldest temple and a major landmark. Arriving ~8:00 lets you photograph the Kaminarimon gate, Nakamise, and main hall before the main crowds. Ueno Park adds autumn color and an optional high-quality museum with English signage. Two solid activities plus food keeps the pace moderate and history-focused.</p>
+      <p><strong>What to expect</strong></p>
+      <ul class="clean">
+        <li>~8:00 at <a href="https://www.google.com/maps/search/?api=1&query=Senso-ji+Temple+Asakusa" target="_blank">Senso-ji</a>. Free. Thunder Gate, Nakamise shopping street (quick look only), Hozomon, main hall, five-story pagoda. Excellent early photos. Main hall hours roughly 6:00–17:00 (slightly later opening in winter).</li>
+        <li>Sit-down mid-range Japanese lunch nearby (tempura, unagi, soba, or a set meal).</li>
+        <li>Short train to <a href="https://www.google.com/maps/search/?api=1&query=Ueno+Park" target="_blank">Ueno Park</a> for foliage. Optional Tokyo National Museum (strong Japanese art/history, English labels) if energy is good — go early if you choose it.</li>
+        <li>Return toward Shinjuku; bakery or light dinner.</li>
+      </ul>
+      <p><strong>Pluses</strong>: Iconic landmark, strong photo value early, history, good food options, English-friendly museum option.<br>
+      <strong>Minuses</strong>: Asakusa gets busy later; Ueno Park color is solid but not the absolute peak garden.<br>
+      <strong>Adjacent</strong>: Asakusa Shrine next to Senso-ji; Sumida River walk; Ueno has multiple museums and a zoo if you want a shorter stop.</p>
+      <p class="small">Transport: Ginza or Asakusa Line from the Shinjuku area ~25–35 min. IC card. Early start is the key.</p>
+    `,
+    "Option: Rikugien or Koishikawa Korakuen instead of Ueno": `
+      <p><strong>Why consider the swap</strong></p>
+      <p>These are classic Edo-period strolling gardens with concentrated maple and ginkgo. They are usually calmer than Ueno and give more “Japanese garden in autumn” atmosphere if foliage reports look strong.</p>
+      <p><strong>What to expect</strong></p>
+      <ul class="clean">
+        <li>Replace Ueno with <a href="https://www.google.com/maps/search/?api=1&query=Rikugien+Garden" target="_blank">Rikugien</a> (Komagome) or <a href="https://www.google.com/maps/search/?api=1&query=Koishikawa+Korakuen" target="_blank">Koishikawa Korakuen</a> (Iidabashi).</li>
+        <li>Small entry fee. Paths designed for viewing color. Often quieter.</li>
+        <li>Same early timing works well. Night illuminations sometimes run in peak season (check on the day).</li>
+      </ul>
+      <p><strong>Pluses</strong>: More intimate autumn experience, historical gardens, fewer crowds.<br>
+      <strong>Minuses</strong>: Smaller than Ueno; less “museum + park” variety.<br>
+      <strong>Adjacent</strong>: Both are near good local lunch spots; Korakuen is close to other central Tokyo sights if you want a short add-on.</p>
+    `,
+    "Option: Sumida River / Skytree exterior only": `
+      <p><strong>Why consider it</strong></p>
+      <p>A short, low-commitment add-on after Senso-ji for skyline photos without committing to the tower interior or long queues.</p>
+      <p><strong>What to expect</strong></p>
+      <ul class="clean">
+        <li>After the temple, short walk or hop toward the Sumida River for exterior views of Tokyo Skytree.</li>
+        <li>Keep it brief. Good photos of the tower and river; no need to go up.</li>
+      </ul>
+      <p><strong>Pluses</strong>: Easy photo payoff, flexible length.<br>
+      <strong>Minuses</strong>: Not a full activity; can still feel touristy.<br>
+      <strong>Adjacent</strong>: River walks and casual food stalls in the area.</p>
+    `,
+    "★ Recommended: Rikugien or Koishikawa Korakuen (calmer autumn) → optional short Shinjuku/Shibuya browse": `
+      <p><strong>Why this is a good flexible day</strong></p>
+      <p>By day 3 you may want a slightly lighter pace. These gardens deliver concentrated autumn color in a traditional setting and are usually less packed than the big parks. An optional short browse keeps shopping casual and early. Fits photography, history, and moderate energy.</p>
+      <p><strong>What to expect</strong></p>
+      <ul class="clean">
+        <li>Morning: <a href="https://www.google.com/maps/search/?api=1&query=Rikugien+Garden" target="_blank">Rikugien</a> or <a href="https://www.google.com/maps/search/?api=1&query=Koishikawa+Korakuen" target="_blank">Koishikawa Korakuen</a>. Early entry. Designed strolling paths, maples and ginkgo, small entry fee. Strong photo spots.</li>
+        <li>Afternoon: optional short casual clothing browse in Shinjuku or a brief Shibuya stop (scramble + one or two stores only — not the full crush).</li>
+        <li>Sit-down lunch near the garden or back in Shinjuku. Bakery take-out.</li>
+      </ul>
+      <p><strong>Pluses</strong>: Calmer, high-quality autumn, flexible afternoon, good photos.<br>
+      <strong>Minuses</strong>: Gardens are smaller; color peak can shift a few days.<br>
+      <strong>Adjacent</strong>: Both gardens are near local restaurants; Rikugien is close to Komagome station with easy JR access.</p>
+      <p class="small">Short subway or JR rides. Keeps the day recovery-friendly.</p>
+    `,
+    "Option: Rest day + depachika food floors": `
+      <p><strong>Why consider a rest day</strong></p>
+      <p>After two full days a lighter morning near the hotel lets you sample high-quality Japanese prepared food without transit. Depachika (department store basements) are excellent for mid-range, ready-to-eat Japanese food and bakery items.</p>
+      <p><strong>What to expect</strong></p>
+      <ul class="clean">
+        <li>Stay around Shinjuku. Explore basement food floors of major department stores for bento, sushi, sweets, and bakery samples.</li>
+        <li>Light walking only. Good for jet-lag recovery or poor weather.</li>
+        <li>Easy Japanese food focus.</li>
+      </ul>
+      <p><strong>Pluses</strong>: Low energy, high food quality, no long trains.<br>
+      <strong>Minuses</strong>: Less sightseeing and photography of landmarks.<br>
+      <strong>Adjacent</strong>: Hotel is central; station area has many options if the big stores feel crowded.</p>
+    `,
+    "Option: Day trip Kamakura / Enoshima": `
+      <p><strong>Why consider a day trip</strong></p>
+      <p>A change of scenery: historic temples, the Great Buddha, coastal walks, or Enoshima island. Adds travel time but stays moderate if you limit it to 1–2 main sites. Autumn color can appear inland.</p>
+      <p><strong>What to expect</strong></p>
+      <ul class="clean">
+        <li>Train from Shinjuku or Tokyo toward Kamakura (~1 hour). IC or JR works for much of the route.</li>
+        <li>Great Buddha (Kotoku-in), a couple of temples, or a coastal walk / Enoshima.</li>
+        <li>Return by evening. Keep the site count low.</li>
+      </ul>
+      <p><strong>Pluses</strong>: Different atmosphere, history, possible sea air.<br>
+      <strong>Minuses</strong>: Extra travel time; weekends can be busy.<br>
+      <strong>Adjacent</strong>: Local seafood and soba near Kamakura stations.</p>
+      <p><a href="https://www.google.com/maps/search/?api=1&query=Kamakura" target="_blank">Maps: Kamakura</a></p>
+    `,
+    "★ Recommended: Morning bakery/light → Shinkansen Tokyo or Shinagawa → Kyoto → KANSEI (Hachijo East)": `
+      <p><strong>Why this is the clean transfer</strong></p>
+      <p>Moving day. A light morning keeps energy for the train. Shinkansen is fast, comfortable, and reliable. Arriving at Kyoto Station and walking or taking a short taxi to KANSEI (Hachijo East Exit, ~6 min) is straightforward. Avoid heavy sightseeing on arrival because weekend crowds begin.</p>
+      <p><strong>What to expect</strong></p>
+      <ul class="clean">
+        <li>Morning: bakery or light breakfast near the hotel, check out, light luggage.</li>
+        <li>JR from Shinjuku to Tokyo Station or Shinagawa, then Shinkansen to Kyoto (~2 h 15 min). Hikari is the usual choice; reserve seats if possible. Point-to-point ticket (Nozomi is faster but often not covered by JR Pass).</li>
+        <li>Kyoto Station → Hachijo East Exit → short walk or taxi to <a href="https://www.google.com/maps/search/?api=1&query=KANSEI+Kyoto+Hachijo" target="_blank">KANSEI Kyoto Hachijo</a>.</li>
+        <li>Evening: easy local dinner near the hotel. Early night.</li>
+      </ul>
+      <p><strong>Pluses</strong>: Comfortable long-distance ride, luggage space, predictable, English signage at stations.<br>
+      <strong>Minuses</strong>: Shinkansen ticket is separate from IC card; weekend arrival means more people at Kyoto Station.<br>
+      <strong>Adjacent</strong>: Kyoto Station has excellent food and a department store if you want a simple meal on arrival.</p>
+      <p class="small">IC covers local trains; Shinkansen needs its own ticket. Consider bag forwarding later if you buy more.</p>
+      <p><a href="https://smart-ex.jp/en/" target="_blank">Buy Tokyo–Kyoto on SmartEX</a></p>
+    `,
+    "Note: Reserve seats if possible; IC card works for local but not Shinkansen": `
+      <p><strong>Rail practical notes for the whole trip</strong></p>
+      <p>These are the basics that make trains easy once you do them once.</p>
+      <ul class="clean">
+        <li>IC cards (Suica/Pasmo, physical or mobile) cover almost all local JR, subway, and many buses. Tap in and out. Reload at machines.</li>
+        <li>Shinkansen requires a separate ticket (or a JR Pass). Reserved seats are worth it with luggage — buy at the station or online via <a href="https://smart-ex.jp/en/" target="_blank">SmartEX</a>.</li>
+        <li>Google Maps or Japan Travel by Navitime give platform numbers and transfer times. Stations have English signs.</li>
+        <li>Tokyo Station and Shinagawa both work well from Shinjuku for the Kyoto train.</li>
+      </ul>
+      <p><strong>Pluses</strong>: Once set up, the system is fast and reliable.<br>
+      <strong>Minuses</strong>: First-time platform finding can feel busy; reserved seats sell out on peak weekends.<br>
+      <strong>Adjacent</strong>: Station eki-ben (bento) are excellent for the train ride.</p>
+    `,
+    "★ Recommended: Fushimi Inari at opening → afternoon station-side or Railway Museum → optional night illumination if booked": `
+      <p><strong>Why this fits the first full Kyoto day</strong></p>
+      <p>Weekend + holiday energy plus peak koyo makes Kiyomizu and Arashiyama brutal after 9:30. Fushimi Inari is the one major site that works well from your hotel (short JR ride) and rewards an early start. The torii tunnels are photogenic and less overwhelming before the main rush. Afternoon stays flexible and lower-energy near the station or a museum.</p>
+      <p><strong>What to expect</strong></p>
+      <ul class="clean">
+        <li>Early JR from Kyoto Station to Inari (~15 min). Climb as far as you like; the lower tunnels are the classic photos. Free. Quieter before 8:30–9:00.</li>
+        <li>Afternoon: Kyoto Railway Museum (excellent if you like trains/history, English signage), station-area walk, or a bath. Avoid Higashiyama today.</li>
+        <li>Night illumination (Eikando or similar) only if you already have a timed ticket — they sell out.</li>
+      </ul>
+      <p><strong>Pluses</strong>: Close to hotel, strong photos, history, early = manageable crowds, flexible afternoon.<br>
+      <strong>Minuses</strong>: The full mountain climb is long; color is good but not the absolute peak maple garden.<br>
+      <strong>Adjacent</strong>: Fushimi sake district nearby if you want a short food/drink stop; station area for easy meals.</p>
+      <p><a href="https://www.google.com/maps/search/?api=1&query=Fushimi+Inari+Taisha" target="_blank">Maps: Fushimi Inari</a></p>
+    `,
+    "★ Recommended: Kiyomizu-dera early + Higashiyama walk down → optional Eikando night if ticketed": `
+      <p><strong>Why this is the classic east Kyoto day</strong></p>
+      <p>Kiyomizu and the Higashiyama lanes are the heart of Kyoto history and autumn color. Going in by 8:00 lets you see the wooden stage and the streets before they fill. The walk down is photogenic. Eikando night maples are excellent if you already hold a timed ticket.</p>
+      <p><strong>What to expect</strong></p>
+      <ul class="clean">
+        <li>Bus or taxi early to <a href="https://www.google.com/maps/search/?api=1&query=Kiyomizu-dera" target="_blank">Kiyomizu-dera</a>. Wooden stage views, pagoda, autumn foliage. Entry fee. Aim to be inside before 8:30.</li>
+        <li>Walk down Sannenzaka / Ninenzaka and the lanes toward the city. Light browsing only.</li>
+        <li>Sit-down lunch away from the densest streets if possible.</li>
+        <li>Eikando night illumination only with a pre-booked ticket.</li>
+      </ul>
+      <p><strong>Pluses</strong>: Iconic Kyoto, strong autumn and architecture photos, history.<br>
+      <strong>Minuses</strong>: Crowds build fast; buses can be slow; night tickets sell out.<br>
+      <strong>Adjacent</strong>: Nearby temples; Philosopher’s Path is a calmer alternative nearby.</p>
+    `,
+    "★ Recommended: Arashiyama bamboo + river early → afternoon Kinkaku-ji or north neighborhood": `
+      <p><strong>Why this works</strong></p>
+      <p>Arashiyama bamboo and the river are best before 8:30. The area has autumn color and classic photos. Kinkaku-ji is a major landmark but requires accepting a bus or longer transit; it can be swapped for a quieter north neighborhood if energy is lower.</p>
+      <p><strong>What to expect</strong></p>
+      <ul class="clean">
+        <li>Early train/bus to Arashiyama. Bamboo grove, river walk, optional temple. Leave the main street before it fills.</li>
+        <li>Afternoon: <a href="https://www.google.com/maps/search/?api=1&query=Kinkaku-ji" target="_blank">Kinkaku-ji</a> if you accept the transit, or a neighborhood you haven’t walked.</li>
+        <li>Sit-down lunch; bakery take-out possible.</li>
+      </ul>
+      <p><strong>Pluses</strong>: Strong photos early, nature + history, flexible afternoon.<br>
+      <strong>Minuses</strong>: Bamboo gets crowded later; Kinkaku-ji transit adds time.<br>
+      <strong>Adjacent</strong>: River boats or local food in Arashiyama if energy allows.</p>
+    `,
+    "★ Recommended: Slack day — Nishiki late morning + one temple you actually want → forward bags to Osaka": `
+      <p><strong>Why this day exists</strong></p>
+      <p>By design this is the uncrowded, flexible day. Use it for Nishiki (food), one temple that still interests you, and practical bag forwarding so the Osaka move is lighter. Matches moderate pace and food priority.</p>
+      <p><strong>What to expect</strong></p>
+      <ul class="clean">
+        <li>Nishiki Market late morning (samples, casual look). Sit-down lunch.</li>
+        <li>One temple or neighborhood you choose. Keep it short.</li>
+        <li>Forward luggage to the Osaka hotel from the station or a convenience counter.</li>
+      </ul>
+      <p><strong>Pluses</strong>: Recovery, food, practical logistics, still “in Kyoto.”<br>
+      <strong>Minuses</strong>: Not a big sightseeing day.<br>
+      <strong>Adjacent</strong>: Station area for forwarding and easy meals.</p>
+    `,
+    "★ Recommended: Special rapid Kyoto → Osaka → short metro to Forza Namba → eat off the main neon": `
+      <p><strong>Why this is the clean move</strong></p>
+      <p>Special rapid is fast (~30 min) and frequent. Forza is a short walk/metro from Namba. Eating off the brightest neon on the first night keeps the evening calmer and more local while still being in the area.</p>
+      <p><strong>What to expect</strong></p>
+      <ul class="clean">
+        <li>Check out, JR special rapid Kyoto → Osaka, then short metro or walk to Hotel Forza Osaka Namba.</li>
+        <li>Drop bags. Dinner a block or two off the main Dotonbori strip. Early-ish night.</li>
+      </ul>
+      <p><strong>Pluses</strong>: Simple, frequent trains, hotel is central for later days.<br>
+      <strong>Minuses</strong>: Namba/Dotonbori is lively; first night is better slightly quieter.<br>
+      <strong>Adjacent</strong>: Convenience stores and simple restaurants right around the hotel.</p>
+    `,
+    "★ Recommended: Kuromon Market early → Osaka Castle park if you want air → night street before/after the crush": `
+      <p><strong>Why this fits a weekend Osaka day</strong></p>
+      <p>Kuromon is excellent for Japanese food samples early. Castle park gives open space and some autumn color without a heavy indoor commitment. Night in Minami is the atmosphere, but going before the 19:00 peak or after you’ve already eaten keeps it manageable.</p>
+      <p><strong>What to expect</strong></p>
+      <ul class="clean">
+        <li>Early Kuromon Market for food. Sit-down or grazing lunch.</li>
+        <li>Optional Osaka Castle park walk (grounds are free; keep the tower optional).</li>
+        <li>Evening: Dotonbori / Namba streets before the heaviest crush, or after dinner elsewhere.</li>
+      </ul>
+      <p><strong>Pluses</strong>: Food focus, open air, central location, photography of the neon later.<br>
+      <strong>Minuses</strong>: Weekend crowds in the market and streets later.<br>
+      <strong>Adjacent</strong>: Many mid-range restaurants just off the main strips.</p>
+    `,
+    "★ Recommended: Nara half-day (deer + Todai-ji) or Kobe (harbor + food)": `
+      <p><strong>Why pick one</strong></p>
+      <p>Both are easy day trips from Osaka and fit a moderate pace. Nara = history + deer + Great Buddha. Kobe = harbor, shorter, strong food. Choose based on energy and interest that morning.</p>
+      <p><strong>What to expect</strong></p>
+      <ul class="clean">
+        <li>Nara: JR ~45–50 min. Deer park (free), Todai-ji (entry). Return by late afternoon.</li>
+        <li>Kobe: Similar train time. Harbor walk, one food stop. Shorter overall.</li>
+      </ul>
+      <p><strong>Pluses</strong>: Change of scenery, history or food, back to the same bed.<br>
+      <strong>Minuses</strong>: Adds transit; Nara deer can be pushy.<br>
+      <strong>Adjacent</strong>: Both cities have good local lunch options near the main stations/parks.</p>
+    `,
+    "★ Recommended: Peace Memorial Museum at opening → Miyajima against the tide table": `
+      <p><strong>Why this order</strong></p>
+      <p>The museum is best at opening (fewer people, more time to absorb). Miyajima’s floating torii depends on the tide — check the table the night before and go when it looks right. Both are high-value for history and photography.</p>
+      <p><strong>What to expect</strong></p>
+      <ul class="clean">
+        <li>Museum at opening. Allow real time; it is heavy and well presented (English support).</li>
+        <li>Then ferry to Miyajima. Itsukushima Shrine and torii. Tide decides the classic “floating” photo. Deer on the island.</li>
+        <li>Return to Hiroshima for the night.</li>
+      </ul>
+      <p><strong>Pluses</strong>: Two major sites, strong history and photos, manageable if timed.<br>
+      <strong>Minuses</strong>: Full day; tide may not cooperate; ferry adds a step.<br>
+      <strong>Adjacent</strong>: Miyajima has local food; Hiroshima has okonomiyaki for dinner.</p>
+    `,
+    "★ Recommended: Hiroshima → Hakone (via Odawara). Check into Hakone Hotel, lake view + breakfast. Onsen evening": `
+      <p><strong>Why this works</strong></p>
+      <p>Hakone replaces Himeji/Mishima with a lakeside stay. The hotel is on Lake Ashi with lake-view rooms and breakfast included. Two nights give time for the classic sights without the long eastward Shinkansen hop.</p>
+      <p><strong>What to expect</strong></p>
+      <ul class="clean">
+        <li>Train from Hiroshima toward Odawara / Hakone area. Local bus or connection to the lakeside hotel.</li>
+        <li>Check into <a href="https://www.google.com/maps/search/?api=1&query=Hakone+Hotel+Lake+Ashi" target="_blank">Hakone Hotel</a>. Lake view room. Breakfast included.</li>
+        <li>Onsen evening. Fuji views depend on weather.</li>
+      </ul>
+      <p><strong>Pluses</strong>: Lake and possible Fuji views, onsen, breakfast included, more relaxed than a castle dash.<br>
+      <strong>Minuses</strong>: Access involves buses after main rail; weather-dependent views.<br>
+      <strong>Adjacent</strong>: Lake cruise pier and Hakone Shrine are nearby.</p>
+    `,
+    "★ Recommended: Breakfast at hotel. Lake Ashi cruise or walk if clear. Ropeway/Owakudani or shrine. Onsen evening": `
+      <p><strong>Why this day</strong></p>
+      <p>Full day in Hakone. Use the included breakfast. Lake Ashi cruise or shoreline walk if clear. Ropeway and Owakudani or the shrine if energy and weather allow. Onsen in the evening.</p>
+      <p><strong>What to expect</strong></p>
+      <ul class="clean">
+        <li>Breakfast at the hotel.</li>
+        <li>Lake activity if weather is good. Optional ropeway or shrine visit.</li>
+        <li>Return for onsen. Moderate pace.</li>
+      </ul>
+      <p><strong>Pluses</strong>: Classic Hakone scenery, flexible, recovery-friendly.<br>
+      <strong>Minuses</strong>: Crowds possible at main sights; weather decides Fuji.<br>
+      <strong>Adjacent</strong>: Hotel location makes short walks easy.</p>
+    `,
+    "★ Recommended: Check out Hakone → train toward Tokyo → Ueno. Hotel Sunroute Stellar Ueno (next to station, no breakfast)": `
+      <p><strong>Why this move</strong></p>
+      <p>Positions you next to Ueno Station for the final two nights and easy Skyliner departure. Hotel is a short walk from the station. No breakfast included.</p>
+      <p><strong>What to expect</strong></p>
+      <ul class="clean">
+        <li>Check out of Hakone Hotel. Train connections toward Tokyo then Ueno.</li>
+        <li>Check into <a href="https://www.google.com/maps/search/?api=1&query=Hotel+Sunroute+Stellar+Ueno" target="_blank">Hotel Sunroute Stellar Ueno</a>.</li>
+        <li>Light evening near the station.</li>
+      </ul>
+      <p><strong>Pluses</strong>: Excellent departure logistics, central Ueno location.<br>
+      <strong>Minuses</strong>: No included breakfast; ordinary train connections.<br>
+      <strong>Adjacent</strong>: Ameyoko and station food right outside.</p>
+    `,
+    "★ Recommended: Flexible buffer day — Ameyoko, Ueno Park, or light shopping. No breakfast included": `
+      <p><strong>Why a buffer day</strong></p>
+      <p>Last full day before departure. Keep it light. Ameyoko for market atmosphere, Ueno Park for outdoor time, or simple rest and shopping. Plan your own breakfast nearby.</p>
+      <p><strong>What to expect</strong></p>
+      <ul class="clean">
+        <li>Breakfast near the hotel or station.</li>
+        <li>Optional Ameyoko or park walk. No heavy transit.</li>
+        <li>Early evening to pack.</li>
+      </ul>
+      <p><strong>Pluses</strong>: Low stress, good for photos or last food.<br>
+      <strong>Minuses</strong>: Not a big sightseeing day (by design).<br>
+      <strong>Adjacent</strong>: Everything is walkable from the station hotel.</p>
+    `,
+    "★ Recommended: Light breakfast nearby → Ameyoko short walk → Skyliner ~13:40 to NRT (terminal by 15:00) for 17:40 flight": `
+      <p><strong>Why this departure flow</strong></p>
+      <p>No breakfast at the hotel. Eat simply nearby. Optional short Ameyoko walk. Skyliner from Keisei-Ueno is the cleanest way to Narita. Terminal by 15:00 for a 17:40 flight gives proper margin.</p>
+      <p><strong>What to expect</strong></p>
+      <ul class="clean">
+        <li>Light breakfast near the station.</li>
+        <li>Optional short Ameyoko walk (or skip for buffer).</li>
+        <li>Skyliner ~13:40 Keisei-Ueno → Narita. Terminal 1 by 15:00. Flight 17:40.</li>
+      </ul>
+      <p><strong>Pluses</strong>: Simple, reliable, good buffer.<br>
+      <strong>Minuses</strong>: Limited morning sightseeing (by design).<br>
+      <strong>Adjacent</strong>: Station area has everything needed for a last snack.</p>
+      <p><a href="https://www.google.com/maps/dir/?api=1&origin=Keisei-Ueno&destination=Narita+Airport&travelmode=transit" target="_blank">Maps: Ueno → NRT</a></p>
+      <p><a href="https://www.keisei.co.jp/keisei/tetudou/skyliner/us/" target="_blank">Buy Skyliner tickets (Keisei)</a></p>
+    `
+  };
+
+  el.innerHTML = `<div class="card"><h2>Day book</h2><p class="meta">Add a line, check it off. Finished lines sink to the bottom. Tap <strong>Details</strong> on any option for the full write-up.</p>
+    ${DAYS.map(day => {
+      const items = asItems(state.dayNotes[day.d]);
+      state.dayNotes[day.d] = items;
+      return `
+      <div class="day">
+        <div class="when">${fmt(day.d).replace(",", "")}</div>
+        <div>
+          <span class="tag">${day.t}</span>
+          <strong>${day.title}</strong>
+          <div class="meta">${day.body}</div>
+          ${checkRows(items, "data-dayitem")}
+          <div class="row" style="margin-top:8px">
+            <input type="text" data-dayadd="${day.d}" placeholder="Add a line for this day" />
+            <button class="go" type="button" data-daybtn="${day.d}">Add</button>
+          </div>
+        </div>
+      </div>`;
+    }).join("")}
+  </div>
+  <div id="detail-modal" style="display:none;position:fixed;inset:0;background:rgba(18,16,14,.92);z-index:100;overflow:auto;padding:16px;">
+    <div class="card" style="max-width:520px;margin:40px auto;">
+      <div class="row" style="justify-content:space-between;align-items:center;">
+        <h3 id="detail-title" style="margin:0">Details</h3>
+        <button type="button" class="go" id="detail-close">Close</button>
+      </div>
+      <div id="detail-body" style="margin-top:12px"></div>
+    </div>
+  </div>`;
+
+  el.querySelectorAll("[data-dayitem]").forEach(box => {
+    const day = box.closest(".day").querySelector("[data-dayadd]").dataset.dayadd;
+    box.onchange = () => {
+      state.dayNotes[day][box.dataset.dayitem].done = box.checked;
+      save(state);
+      renderPlan();
+    };
+  });
+  el.querySelectorAll("[data-daybtn]").forEach(btn => btn.onclick = () => {
+    const input = el.querySelector(`[data-dayadd="${btn.dataset.daybtn}"]`);
+    const v = input.value.trim();
+    if (!v) return;
+    state.dayNotes[btn.dataset.daybtn] = asItems(state.dayNotes[btn.dataset.daybtn]);
+    state.dayNotes[btn.dataset.daybtn].push({ text: v, done: false });
+    save(state);
+    renderPlan();
+  });
+
+  // Details modal
+  const modal = el.querySelector("#detail-modal");
+  const body = el.querySelector("#detail-body");
+  const title = el.querySelector("#detail-title");
+  el.querySelectorAll("[data-detail-idx]").forEach(btn => {
+    btn.onclick = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const dayEl = btn.closest(".day");
+      const dayKey = dayEl.querySelector("[data-dayadd]").dataset.dayadd;
+      const idx = Number(btn.dataset.detailIdx);
+      const items = asItems(state.dayNotes[dayKey]);
+      const key = items[idx] ? items[idx].text : "";
+      title.textContent = key.length > 48 ? key.slice(0, 48) + "…" : key || "Details";
+      body.innerHTML = DETAILS[key] || `<p>No extra details stored for this note yet. You can still use it as a checklist item.</p><p class="small">Add your own notes in the line below if needed.</p>`;
+      modal.style.display = "block";
+    };
+  });
+  el.querySelector("#detail-close").onclick = () => { modal.style.display = "none"; };
+  modal.onclick = (e) => { if (e.target === modal) modal.style.display = "none"; };
+}
+
+const LEGS = [
+  { from: "nrt", to: "shinjuku", label: "Narita → Cabin Shinjuku", note: "N’EX. Transit mode, not a taxi." },
+  { from: "shinjuku", to: "kyoto", label: "Shinjuku → KANSEI Kyoto", note: "Shinkansen. Hachijo exit on the pin." },
+  { from: "kyoto", to: "osaka", label: "Kyoto → Dotonbori", note: "Special rapid, then the Namba exit." },
+  { from: "osaka", to: "hiroshima", label: "Namba → Mitsui Garden", note: "Shin-Osaka, then the tram or a walk." },
+  { from: "hiroshima", to: "hakone", label: "Hiroshima → Hakone Hotel", note: "Via Odawara or similar. Lake Ashi hotel." },
+  { from: "hakone", to: "ueno", label: "Hakone → Sunroute Stellar Ueno", note: "Train to Tokyo area then Ueno. Station hotel." },
+  { from: "ueno", to: "nrt", label: "Ueno → Narita", note: "Skyliner. Leave around 13:40." }
+];
+function gQuery(b) {
+  return encodeURIComponent(b.name + (b.address ? ", " + b.address : ", " + b.city));
+}
+function gPlace(b) {
+  return "https://www.google.com/maps/search/?api=1&query=" + gQuery(b);
+}
+function gDir(dest, origin) {
+  let url = "https://www.google.com/maps/dir/?api=1&travelmode=transit&destination=" + gQuery(dest);
+  if (origin) url += "&origin=" + gQuery(origin);
+  return url;
+}
+function gEmbed(query, z) {
+  return "https://maps.google.com/maps?q=" + encodeURIComponent(query) + "&z=" + (z || 15) + "&output=embed&hl=en";
+}
+function gRouteEmbed() {
+  const rest = BASES.slice(1).map(b => b.pin.join(",")).join("+to:");
+  return "https://maps.google.com/maps?saddr=" + BASES[0].pin.join(",") + "&daddr=" + rest + "&output=embed&hl=en";
+}
+function showOnMap(query, z) {
+  const frame = document.getElementById("gmap");
+  if (frame) frame.src = query ? gEmbed(query, z) : gRouteEmbed();
+}
+function renderMap() {
+  const frame = document.getElementById("gmap");
+  if (frame && (!frame.src || frame.src === "about:blank" || frame.src.endsWith("about:blank"))) showOnMap();
+  document.getElementById("map-list").innerHTML = `
+    <div class="card"><h2>Google Maps</h2>
+      <div class="route">${BASES.map((b,i) => `<button type="button" data-show="${b.id}"><b>${i+1}</b><span>${b.city.split("·")[0].trim()}</span></button>`).join('<i class="leg"></i>')}</div>
+      <p class="small">Tap a stop to put that hotel on the map above. The full route loads first.</p>
+      <button class="ghost" type="button" id="show-route">Whole route</button>
+    </div>
+    <div class="card"><h2>Legs in the app</h2><p class="meta">Transit mode. Opens the Google Maps app if it is installed.</p>
+      ${LEGS.map(leg => `<p style="margin:10px 0"><a class="go" target="_blank" rel="noopener" href="${gDir(BASES.find(b => b.id === leg.to), BASES.find(b => b.id === leg.from))}">${leg.label}</a><span class="meta" style="display:block">${leg.note}</span></p>`).join("")}
+    </div>` + BASES.map(b => `
+    <div class="card">
+      <div class="tag">${b.city}</div>
+      <h3>${b.name}</h3>
+      <p class="meta">${b.stay}</p>
+      <div class="row">
+        <button class="ghost" type="button" data-show="${b.id}">Show on map</button>
+        <a class="go" target="_blank" rel="noopener" href="${gPlace(b)}">Open app</a>
+        <a class="ghost" target="_blank" rel="noopener" href="${gDir(b)}">Transit to hotel</a>
+      </div>
+    </div>`).join("");
+  document.getElementById("map-list").querySelectorAll("[data-show]").forEach(btn => {
+    btn.onclick = () => {
+      const b = BASES.find(x => x.id === btn.dataset.show);
+      showOnMap(b.name + (b.address ? ", " + b.address : ""), 16);
+      document.getElementById("gmap").scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+  });
+  const route = document.getElementById("show-route");
+  if (route) route.onclick = () => showOnMap();
+}
+
+function renderPlaces() {
+  const el = document.getElementById("view-places");
+  const current = state.place || "shinjuku";
+  const b = BASES.find(x => x.id === current) || BASES[1];
+  el.innerHTML = `
+    <div class="place-switch">
+      ${BASES.map(p => `<button class="pill ${p.id === b.id ? "on" : ""}" data-p="${p.id}">${p.city.split("·")[0].trim()}</button>`).join("")}
+    </div>
+    <div class="card">
+      <div class="tag gold">${b.stay}</div>
+      <h2>${b.name}</h2>
+      <p class="meta">${b.address || b.city}</p>
+      <div class="row">
+        <a class="go" target="_blank" rel="noopener" href="${gPlace(b)}">Open in Google Maps</a>
+        <a class="ghost" target="_blank" rel="noopener" href="${gDir(b)}">Transit from here</a>
+      </div>
+      <h3>History of the ground</h3>
+      <p>${b.history}</p>
+      <h3>Advisor</h3>
+      <p>${b.advisor}</p>
+      <h3>Do this, not everything</h3>
+      <ul class="clean">${b.recs.map(r => `<li>${r}</li>`).join("")}</ul>
+      <h3>Money on the ground</h3>
+      <p>${b.money}</p>
+      <h3>Your list</h3>
+      ${checkRows(asItems(state.notes[b.id]), "data-noteitem")}
+      <div class="row" style="margin-top:8px">
+        <input type="text" id="place-add" placeholder="Add a line for ${esc(b.city)}" />
+        <button class="go" type="button" id="place-add-btn">Add</button>
+      </div>
+    </div>`;
+  el.querySelectorAll("[data-p]").forEach(btn => btn.onclick = () => { state.place = btn.dataset.p; save(state); renderPlaces(); });
+  el.querySelectorAll("[data-noteitem]").forEach(box => box.onchange = () => {
+    state.notes[b.id] = asItems(state.notes[b.id]);
+    state.notes[b.id][box.dataset.noteitem].done = box.checked;
+    save(state);
+    renderPlaces();
+  });
+  document.getElementById("place-add-btn").onclick = () => {
+    const v = document.getElementById("place-add").value.trim();
+    if (!v) return;
+    state.notes[b.id] = asItems(state.notes[b.id]);
+    state.notes[b.id].push({ text: v, done: false });
+    save(state);
+    renderPlaces();
+  };
+}
+
+function packingSection() {
+  const cats = [...new Set(PACKING.map(p => p.cat))];
+  return cats.map(cat => {
+    const items = PACKING.filter(p => p.cat === cat);
+    const open = items.filter(p => !state.checks[p.id]).length;
+    const rows = items.map(p => {
+      const checked = state.checks[p.id] ? "checked" : "";
+      return `<label class="check"><input type="checkbox" data-c="${p.id}" ${checked}/><span>${p.text}<span class="meta" style="display:block">${p.note}</span></span></label>`;
+    }).join("");
+    return `<div class="card"><h3>${cat}</h3><p class="meta">${open} open</p>${rows}</div>`;
+  }).join("");
+}
+function renderKit() {
+  const el = document.getElementById("view-kit");
+  el.innerHTML = `
+    ${fxCard()}
+    ${bothCard()}
+    ${["pre", "exit", "post"].map(phase => {
+      const label = phase === "pre" ? "Pre-trip" : phase === "exit" ? "Leaving Japan" : "Post-landing";
+      const items = MINDERS.filter(m => m.phase === phase).slice().sort((a, b) => Number(!!state.checks[a.id]) - Number(!!state.checks[b.id]));
+      const open = items.filter(m => !state.checks[m.id]).length;
+      return `<div class="card"><h2>${label}</h2><p class="meta">${open} open · send an update so the other phone sees the check</p>${items.map(minderRow).join("")}</div>`;
+    }).join("")}
+    <div class="card"><h2>Packing checklist</h2><p class="meta">Nov 17–Dec 8 · cool autumn layers · multi-city. Checks save locally and sync via Kit → Send update.</p></div>
+    ${packingSection()}
+    <div class="card">
+      <h3>Your own</h3>
+      <p class="meta">Checked lines sink to the bottom.</p>
+      ${checkRows(state.extra, "data-e")}
+      <div class="row" style="margin-top:10px">
+        <input type="text" id="new-rem" placeholder="Add a reminder" />
+        <button class="go" id="add-rem">Add</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Carry</h3>
+      <ul class="clean">
+        <li>Passport, the AA and hotel confirmations offline</li>
+        <li>One card that works abroad, and ¥20,000 cash to start — IC will not cover every counter</li>
+        <li>Prescriptions in original bottles. A compact umbrella. Shoes you can remove.</li>
+        <li>Luggage: forward the big bag twice. Ride the shinkansen with a day bag.</li>
+      </ul>
+      <p class="small">Hotel subtotal on the note is about $2,660 before taxes and fees. Kyoto city accommodation tax is charged on top of the room and is already often inside the plan price — read the KANSEI receipt. Partner air is sunk at $1,161.73.</p>
+      <button class="ghost" id="export">Copy notes</button>
+    </div>`;
+  el.querySelectorAll("[data-e]").forEach(box => box.onchange = () => {
+    state.extra[box.dataset.e].done = box.checked;
+    save(state);
+    renderKit();
+  });
+  document.getElementById("add-rem").onclick = () => {
+    const v = document.getElementById("new-rem").value.trim();
+    if (!v) return;
+    state.extra.push({ text: v, done: false });
+    save(state); renderKit();
+  };
+  document.getElementById("export").onclick = async () => {
+    const lines = ["Honshu notes",
+      ...Object.entries(state.notes).map(([k, v]) => k + ": " + asItems(v).map(x => (x.done ? "[x] " : "[ ] ") + x.text).join("; ")),
+      ...Object.entries(state.dayNotes).map(([k, v]) => k + ": " + asItems(v).map(x => (x.done ? "[x] " : "[ ] ") + x.text).join("; "))];
+    try { await navigator.clipboard.writeText(lines.join("\n")); document.getElementById("export").textContent = "Copied"; }
+    catch { alert(lines.join("\n")); }
+  };
+  bindFx(el);
+  bindChecks(el);
+  bindBoth(el);
+}
+
+function uid() { return "e" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+function numOrNull(v) {
+  if (v === "" || v == null) return null;
+  const n = Number(String(v).replace(/,/g, ""));
+  return Number.isFinite(n) ? Math.round(n * 100) / 100 : null;
+}
+function moneyPlain(n, cur) {
+  if (n == null) return "—";
+  return cur === "USD" ? "$" + n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "¥" + Math.round(n).toLocaleString("en-US");
+}
+function toUSD(n, cur) {
+  if (n == null) return 0;
+  const rate = state.fx.rate || 158.1;
+  return cur === "USD" ? n : n / rate;
+}
+function spendTotals() {
+  let est = 0, act = 0;
+  state.expenses.forEach(e => {
+    if (e.est != null) est += toUSD(e.est, e.cur);
+    if (e.act != null) act += toUSD(e.act, e.cur);
+  });
+  return { est, act, var: act - est };
+}
+function dayList() {
+  const set = new Set(DAYS.map(d => d.d));
+  state.expenses.forEach(e => { if (e.date) set.add(e.date); });
+  return [...set].sort();
+}
+function renderSpend() {
+  const el = document.getElementById("view-spend");
+  const t = spendTotals();
+  const days = dayList().filter(d => state.expenses.some(e => e.date === d) || (state.dayMemo[d] && state.dayMemo[d].trim()));
+  const byDay = days.map(d => {
+    const rows = state.expenses.filter(e => e.date === d);
+    const byCat = CATS.map(c => {
+      const items = rows.filter(e => e.cat === c.id);
+      if (!items.length) return "";
+      const est = items.reduce((s, e) => s + (e.est != null ? toUSD(e.est, e.cur) : 0), 0);
+      const act = items.reduce((s, e) => s + (e.act != null ? toUSD(e.act, e.cur) : 0), 0);
+      return `<div class="exp-row">
+        <div class="top"><span class="tag gold">${c.label}</span><span class="amt">${moneyPlain(act, "USD")}</span></div>
+        <p class="small">est ${moneyPlain(est, "USD")} · ${act - est >= 0 ? "+" : ""}${(act - est).toFixed(2)}</p>
+        ${items.map(e => `<p style="margin:4px 0 0">${esc(e.desc || "(no label)")} · est ${moneyPlain(e.est, e.cur)} · act ${moneyPlain(e.act, e.cur)}${e.note ? `<span class="small" style="display:block">${esc(e.note)}</span>` : ""} <button class="ghost" data-del="${e.id}" style="padding:4px 8px;margin-top:4px">remove</button></p>`).join("")}
+      </div>`;
+    }).join("");
+    const memo = state.dayMemo[d] || "";
+    return `<div class="card">
+      <h3>${fmt(d)}</h3>
+      ${byCat || `<p class="small">No entries yet.</p>`}
+      <label class="small" style="display:block;margin-top:8px">Day note</label>
+      <textarea class="memo" data-memo="${d}" placeholder="Personal note for this day">${esc(memo)}</textarea>
+    </div>`;
+  }).join("");
+  const today = todayISO();
+  el.innerHTML = `
+    <div class="statgrid">
+      <div class="stat"><b>${moneyPlain(t.est, "USD")}</b><span>estimate</span></div>
+      <div class="stat"><b>${moneyPlain(t.act, "USD")}</b><span>actual</span></div>
+      <div class="stat"><b class="${t.var > 0 ? "var-neg" : "var-pos"}">${t.var >= 0 ? "+" : ""}${t.var.toFixed(2)}</b><span>variance USD</span></div>
+      <div class="stat"><b>${state.expenses.length}</b><span>entries</span></div>
+    </div>
+    <p class="small" style="margin:0 4px 8px">USD totals use the Kit rate (¥${(state.fx.rate || 158.1).toFixed(2)}). JPY lines stay in yen on the entry.</p>
+    <div class="card exp-form">
+      <div class="tag gold">Add</div>
+      <h2>Entry</h2>
+      <label>Date</label>
+      <input type="date" id="ex-date" value="${today}" />
+      <div class="pair">
+        <div><label>Category</label>
+          <select id="ex-cat">${CATS.map(c => `<option value="${c.id}">${c.label}</option>`).join("")}</select></div>
+        <div><label>Currency</label>
+          <select id="ex-cur"><option value="JPY">JPY</option><option value="USD">USD</option></select></div>
+      </div>
+      <label>What</label>
+      <input type="text" id="ex-desc" placeholder="ramen, N’EX, temple ticket…" />
+      <div class="pair">
+        <div><label>Estimate</label><input type="text" id="ex-est" inputmode="decimal" placeholder="0" /></div>
+        <div><label>Actual</label><input type="text" id="ex-act" inputmode="decimal" placeholder="0" /></div>
+      </div>
+      <label>Personal note</label>
+      <textarea id="ex-note" placeholder="cash, who paid, why it ran over…"></textarea>
+      <button class="go" id="ex-add" style="margin-top:10px;width:100%">Add entry</button>
+    </div>
+    ${byDay || `<div class="card"><p class="small">No days with entries yet. Add one above.</p></div>`}
+    <div class="card">
+      <h3>Export</h3>
+      <p class="meta">Post-trip report: itinerary, minders, every expense with estimate vs actual, daily category totals, and personal notes.</p>
+      <div class="row">
+        <button class="go" id="ex-html">Download report</button>
+        <button class="ghost" id="ex-json">Download JSON</button>
+      </div>
+    </div>`;
+  bindSpend(el);
+}
+function bindSpend(el) {
+  el.querySelector("#ex-add").onclick = () => {
+    const desc = el.querySelector("#ex-desc").value.trim();
+    const est = numOrNull(el.querySelector("#ex-est").value);
+    const act = numOrNull(el.querySelector("#ex-act").value);
+    const note = el.querySelector("#ex-note").value.trim();
+    if (!desc && est == null && act == null && !note) return;
+    state.expenses.push({
+      id: uid(),
+      date: el.querySelector("#ex-date").value || todayISO(),
+      cat: el.querySelector("#ex-cat").value,
+      cur: el.querySelector("#ex-cur").value,
+      desc, est, act, note,
+      who: state.who,
+      at: new Date().toISOString()
+    });
+    save(state);
+    renderSpend();
+  };
+  el.querySelectorAll("[data-del]").forEach(b => b.onclick = () => {
+    state.expenses = state.expenses.filter(e => e.id !== b.dataset.del);
+    save(state);
+    renderSpend();
+  });
+  el.querySelectorAll("[data-memo]").forEach(box => {
+    box.onblur = () => {
+      state.dayMemo[box.dataset.memo] = box.value;
+      save(state);
+    };
+  });
+  el.querySelector("#ex-html").onclick = () => downloadReport("html");
+  el.querySelector("#ex-json").onclick = () => downloadReport("json");
+}
+function reportHTML() {
+  const t = spendTotals();
+  const days = dayList().filter(d => state.expenses.some(e => e.date === d) || (state.dayMemo[d] && state.dayMemo[d].trim()));
+  const dayBlocks = days.map(d => {
+    const rows = state.expenses.filter(e => e.date === d);
+    const cats = CATS.map(c => {
+      const items = rows.filter(e => e.cat === c.id);
+      if (!items.length) return "";
+      const lines = items.map(e => `<tr><td>${esc(e.desc || "")}</td><td>${esc(catLabel(e.cat))}</td><td>${moneyPlain(e.est, e.cur)}</td><td>${moneyPlain(e.act, e.cur)}</td><td>${esc(e.note || "")}</td><td>${esc(e.who || "")}</td></tr>`).join("");
+      return lines;
+    }).join("");
+    const memo = state.dayMemo[d] ? `<p><em>Day note:</em> ${esc(state.dayMemo[d])}</p>` : "";
+    return `<h3>${fmt(d)}</h3>${memo}<table><thead><tr><th>What</th><th>Category</th><th>Estimate</th><th>Actual</th><th>Note</th><th>Who</th></tr></thead><tbody>${cats || "<tr><td colspan='6'>No entries</td></tr>"}</tbody></table>`;
+  }).join("");
+  const catTotals = CATS.map(c => {
+    const items = state.expenses.filter(e => e.cat === c.id);
+    const est = items.reduce((s, e) => s + (e.est != null ? toUSD(e.est, e.cur) : 0), 0);
+    const act = items.reduce((s, e) => s + (e.act != null ? toUSD(e.act, e.cur) : 0), 0);
+    return `<tr><td>${c.label}</td><td>${moneyPlain(est, "USD")}</td><td>${moneyPlain(act, "USD")}</td><td>${(act - est).toFixed(2)}</td></tr>`;
+  }).join("");
+  const minders = MINDERS.map(m => `<li>${state.checks[m.id] ? "[x]" : "[ ]"} ${esc(m.text)} — ${esc(m.why)}</li>`).join("");
+  const plan = DAYS.map(d => `<li><strong>${fmt(d.d)} · ${esc(d.t)}</strong> — ${esc(d.title)}. ${esc(d.body)}</li>`).join("");
+  const hotels = BASES.map(b => `<li><strong>${esc(b.name)}</strong> (${esc(b.city)}) — ${esc(b.stay)}${b.address ? ". " + esc(b.address) : ""}</li>`).join("");
+  return `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Honshu report · Nov 17–Dec 8 2026</title>
+<style>body{font:16px/1.45 -apple-system,sans-serif;max-width:760px;margin:24px auto;padding:0 16px;color:#1b140c;background:#f7f1e6}h1,h2,h3{font-weight:560}table{width:100%;border-collapse:collapse;margin:8px 0 18px}th,td{border-bottom:1px solid #e4d8c4;padding:6px 4px;text-align:left;vertical-align:top;font-size:14px}th{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:#6b5e4e}</style></head><body>
+<h1>Honshu · 17 Nov – 8 Dec 2026</h1>
+<p>${esc(TRIP.names)}. AA ${esc(TRIP.confirm.aa)} / JL ${esc(TRIP.confirm.jl)}. Partner air $${TRIP.confirm.fare.toFixed(2)}. Exported ${new Date().toISOString().slice(0, 16).replace("T", " ")}.</p>
+<h2>Flights</h2>
+<ul>${TRIP.flights.map(f => `<li>${esc(f.code)} (${esc(f.op)}) ${esc(f.date)} ${esc(f.from)} → ${esc(f.to)} ${esc(f.cabin)}. ${esc(f.bag)}</li>`).join("")}</ul>
+<h2>Bases</h2><ul>${hotels}</ul>
+<h2>Day plan</h2><ul>${plan}</ul>
+<h2>Spend</h2>
+<p>Estimate ${moneyPlain(t.est, "USD")} · Actual ${moneyPlain(t.act, "USD")} · Variance ${t.var >= 0 ? "+" : ""}${t.var.toFixed(2)} USD. Rate used ¥${(state.fx.rate || 158.1).toFixed(2)} per dollar.</p>
+<table><thead><tr><th>Category</th><th>Estimate</th><th>Actual</th><th>Variance</th></tr></thead><tbody>${catTotals}</tbody></table>
+${dayBlocks || "<p>No expense entries.</p>"}
+<h2>Minders</h2><ul>${minders}</ul>
+<p class="small">Hotels on the original note about $2,660 before tax. This report is the working record; confirm receipts against the card posts.</p>
+</body></html>`;
+}
+function downloadReport(kind) {
+  const stamp = new Date().toISOString().slice(0, 10);
+  if (kind === "json") {
+    const blob = new Blob([JSON.stringify({
+      trip: TRIP, bases: BASES.map(b => ({ id: b.id, name: b.name, stay: b.stay })),
+      days: DAYS, expenses: state.expenses, dayMemo: state.dayMemo,
+      checks: state.checks, notes: state.notes, dayNotes: state.dayNotes, extra: state.extra,
+      fx: state.fx, exported: new Date().toISOString()
+    }, null, 2)], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `honshu-records-${stamp}.json`;
+    a.click();
+    return;
+  }
+  const blob = new Blob([reportHTML()], { type: "text/html" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `honshu-report-${stamp}.html`;
+  a.click();
+}
+
+function show(v) {
+  document.querySelectorAll(".view").forEach(s => s.classList.remove("on"));
+  document.getElementById("view-" + v).classList.add("on");
+  document.querySelectorAll("nav.dock button").forEach(b => b.classList.toggle("on", b.dataset.v === v));
+  if (v === "map") renderMap();
+  if (v === "today") renderToday();
+  if (v === "spend") renderSpend();
+}
+document.querySelectorAll("nav.dock button").forEach(b => b.onclick = () => show(b.dataset.v));
+document.querySelector(".kicker").textContent = (state.who || "Steven") + " · shared with " + ((state.who || "Steven") === "Steven" ? "Thanh" : "Steven");
+renderToday(); renderPlan(); renderPlaces(); renderKit(); renderSpend();
+</script>
+</body>
+</html>
